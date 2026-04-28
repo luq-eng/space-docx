@@ -7,39 +7,40 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { width: 100%; max-width: 500px; padding: 24px; }
+        .container { width: 100%; max-width: 550px; padding: 24px; }
         .card { background: #111; border: 1px solid #1f1f1f; border-radius: 24px; padding: 40px; }
         .logo { text-align: center; margin-bottom: 32px; }
         .logo-icon { font-size: 48px; }
         .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        h1 { font-size: 24px; margin-bottom: 8px; }
+        h1 { font-size: 24px; margin-bottom: 8px; text-align: center; }
         .subtitle { color: #a1a1aa; font-size: 14px; margin-bottom: 32px; text-align: center; }
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
         label { display: block; font-size: 13px; color: #a1a1aa; margin-bottom: 8px; }
         input { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; color: white; font-size: 14px; }
         input:focus { outline: none; border-color: #3b82f6; }
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 16px; font-size: 16px; }
-        .btn-outline { background: #1a1a1a; border: 1px solid #2a2a2a; }
+        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 16px; font-size: 16px; transition: transform 0.2s; }
+        .btn:hover { transform: translateY(-2px); }
         .success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); padding: 16px; border-radius: 12px; margin-bottom: 20px; color: #22c55e; text-align: center; }
         .error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); padding: 16px; border-radius: 12px; margin-bottom: 20px; color: #ef4444; text-align: center; }
-        .chave-box { background: #1a1a1a; padding: 16px; border-radius: 12px; margin: 16px 0; text-align: center; font-family: monospace; font-size: 18px; letter-spacing: 2px; color: #3b82f6; }
+        .chave-box { background: #1a1a1a; padding: 16px; border-radius: 12px; margin: 16px 0; text-align: center; font-family: monospace; font-size: 14px; letter-spacing: 1px; color: #3b82f6; word-break: break-all; }
         .info { font-size: 12px; color: #a1a1aa; text-align: center; margin-top: 20px; }
         .login-link { text-align: center; margin-top: 24px; font-size: 13px; color: #a1a1aa; }
         .login-link a { color: #3b82f6; text-decoration: none; }
+        @media (max-width: 768px) { .container { padding: 16px; } .card { padding: 24px; } .row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <div class="logo"><div class="logo-icon">🛸</div><div class="logo-text">SPACE-DOCX</div></div>
+            <div class="logo"><div class="logo-icon">🛡️</div><div class="logo-text">SPACE-DOCX</div></div>
             <h1>Teste Gratuito</h1>
             <p class="subtitle">7 dias de acesso completo • 5 validações</p>
 
             {% if mensagem %}
                 <div class="success">{{ mensagem }}</div>
                 <div class="chave-box">{{ chave_gerada }}</div>
-                <button class="btn btn-outline" onclick="copiarChave()">📋 Copiar chave</button>
+                <button class="btn" onclick="copiarChave()" style="background: #1a1a1a; border: 1px solid #2a2a2a;">📋 Copiar chave</button>
                 <div class="info">Use esta chave na tela de login para ativar seu teste gratuito.<br>Válida por 7 dias.</div>
             {% endif %}
 
@@ -48,34 +49,39 @@
             {% endif %}
 
             <form method="POST">
-                <div class="form-group">
-                    <label>Nome completo</label>
-                    <input type="text" name="nome" required placeholder="João Silva">
-                </div>
-                <div class="form-group">
-                    <label>E-mail</label>
-                    <input type="email" name="email" required placeholder="seu@email.com">
+                <div class="form-group"><label>Nome completo</label><input type="text" name="nome" required></div>
+                <div class="form-group"><label>E-mail</label><input type="email" name="email" required></div>
+                <div class="row">
+                    <div><label>CPF</label><input type="text" name="cpf" id="cpf" placeholder="000.000.000-00"></div>
+                    <div><label>CNPJ</label><input type="text" name="cnpj" id="cnpj" placeholder="00.000.000/0001-00"></div>
                 </div>
                 <div class="row">
-                    <div class="form-group">
-                        <label>Telefone</label>
-                        <input type="text" name="telefone" placeholder="(11) 99999-9999">
-                    </div>
-                    <div class="form-group">
-                        <label>CNPJ (opcional)</label>
-                        <input type="text" name="cnpj" id="cnpj" placeholder="00.000.000/0001-00">
-                    </div>
+                    <div><label>CEP</label><input type="text" name="cep" id="cep" placeholder="00000-000"></div>
+                    <div><label>Telefone</label><input type="text" name="telefone" id="telefone" placeholder="(11) 99999-9999"></div>
                 </div>
                 <button type="submit" class="btn">Gerar Chave de Teste</button>
             </form>
 
-            <div class="login-link">
-                Já tem chave? <a href="/login">Fazer login</a>
-            </div>
+            <div class="login-link">Já tem chave? <a href="/login">Fazer login</a></div>
         </div>
     </div>
 
     <script>
+        function copiarChave() {
+            const chave = document.querySelector('.chave-box').innerText;
+            navigator.clipboard.writeText(chave);
+            alert('Chave copiada! Use-a na tela de login.');
+        }
+        
+        document.getElementById('cpf')?.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0,11);
+            if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+            else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+            e.target.value = v;
+        });
+        
         document.getElementById('cnpj')?.addEventListener('input', function(e) {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 14) v = v.slice(0,14);
@@ -85,12 +91,21 @@
             else if (v.length > 2) v = v.replace(/(\d{2})(\d{1,3})/, '$1.$2');
             e.target.value = v;
         });
-
-        function copiarChave() {
-            const chave = document.querySelector('.chave-box').innerText;
-            navigator.clipboard.writeText(chave);
-            alert('Chave copiada! Use-a na tela de login.');
-        }
+        
+        document.getElementById('cep')?.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 8) v = v.slice(0,8);
+            if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+            e.target.value = v;
+        });
+        
+        document.getElementById('telefone')?.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0,11);
+            if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            e.target.value = v;
+        });
     </script>
 </body>
 </html>
