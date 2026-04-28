@@ -8,47 +8,51 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
         .app { display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: #111; border-right: 1px solid #1f1f1f; padding: 24px; position: fixed; height: 100vh; overflow-y: auto; }
-        .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #1f1f1f; }
-        .logo-icon { font-size: 28px; }
-        .logo-text { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-item { display: block; padding: 12px 16px; border-radius: 12px; color: #a1a1aa; text-decoration: none; margin-bottom: 8px; cursor: pointer; }
+        .sidebar { width: 280px; background: #111; border-right: 1px solid #1f1f1f; padding: 32px 24px; position: fixed; height: 100vh; overflow-y: auto; }
+        .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid #1f1f1f; }
+        .logo-icon { font-size: 32px; }
+        .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-item { display: block; padding: 12px 16px; border-radius: 12px; color: #a1a1aa; text-decoration: none; margin-bottom: 8px; font-size: 14px; transition: all 0.2s; cursor: pointer; }
         .nav-item:hover, .nav-item.active { background: #1a1a1a; color: #fff; }
-        .main { flex: 1; margin-left: 260px; padding: 24px; }
+        .main { flex: 1; margin-left: 280px; padding: 32px; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #1f1f1f; flex-wrap: wrap; gap: 16px; }
+        .header h1 { font-size: 24px; font-weight: 600; }
+        .header p { color: #a1a1aa; font-size: 13px; margin-top: 4px; }
         .plan-badge { padding: 6px 12px; background: #1a1a1a; border-radius: 20px; font-size: 12px; color: #3b82f6; }
-        .logout-btn { padding: 8px 16px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; color: #a1a1aa; text-decoration: none; }
-        .upload-card { background: #111; border: 1px solid #1f1f1f; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
-        .upload-area { border: 2px dashed #2a2a2a; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .logout-btn { padding: 8px 20px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; color: #a1a1aa; text-decoration: none; font-size: 13px; transition: all 0.2s; }
+        .logout-btn:hover { background: #2a2a2a; color: #fff; }
+        .upload-card { background: #111; border: 1px solid #1f1f1f; border-radius: 20px; padding: 32px; margin-bottom: 32px; }
+        .upload-card h3 { font-size: 18px; margin-bottom: 20px; }
+        .upload-area { border: 2px dashed #2a2a2a; border-radius: 16px; padding: 48px; text-align: center; cursor: pointer; transition: all 0.3s; }
         .upload-area:hover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
-        .upload-icon { font-size: 48px; margin-bottom: 12px; }
-        .file-info { margin-top: 16px; padding: 12px; background: #1a1a1a; border-radius: 10px; font-size: 13px; color: #22c55e; }
-        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 16px; transition: transform 0.2s; }
+        .upload-icon { font-size: 48px; margin-bottom: 16px; }
+        .file-info { margin-top: 16px; padding: 12px; background: #1a1a1a; border-radius: 12px; font-size: 13px; color: #22c55e; }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 20px; font-size: 14px; transition: transform 0.2s; }
         .btn-primary:hover { transform: translateY(-2px); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .result-card { background: #111; border: 1px solid #1f1f1f; border-radius: 16px; padding: 24px; margin-top: 24px; }
-        .score-circle { width: 120px; height: 120px; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .result-card { background: #111; border: 1px solid #1f1f1f; border-radius: 20px; padding: 32px; margin-top: 32px; text-align: center; }
+        .score-circle { width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; }
         .score-value { font-size: 48px; font-weight: 700; }
-        .status { text-align: center; font-size: 24px; font-weight: 600; margin-bottom: 20px; }
-        .rastro-item { padding: 10px; background: #1a1a1a; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+        .status { text-align: center; font-size: 24px; font-weight: 600; margin: 20px 0; }
         .historico-table { width: 100%; border-collapse: collapse; }
-        .historico-table th, .historico-table td { padding: 12px; text-align: left; border-bottom: 1px solid #1f1f1f; }
+        .historico-table th, .historico-table td { padding: 14px; text-align: left; border-bottom: 1px solid #1f1f1f; }
         .historico-table th { color: #a1a1aa; font-weight: 500; font-size: 12px; }
-        .loading-animation { text-align: center; padding: 40px; }
-        .spinner { width: 60px; height: 60px; border: 4px solid #1a1a1a; border-top-color: #3b82f6; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite; }
+        .loading-animation { text-align: center; padding: 60px; }
+        .spinner { width: 60px; height: 60px; border: 3px solid #1a1a1a; border-top-color: #3b82f6; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .analises-restantes { font-size: 12px; color: #a1a1aa; margin-top: 8px; }
-        @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } .header { flex-direction: column; text-align: center; } }
+        .warning-badge { background: rgba(239,68,68,0.2); color: #ef4444; padding: 8px 16px; border-radius: 12px; font-size: 13px; text-align: center; margin-bottom: 20px; }
+        @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } .header { flex-direction: column; text-align: center; } .historico-table { font-size: 12px; } .historico-table th, .historico-table td { padding: 8px; } }
     </style>
 </head>
 <body>
     <div class="app">
         <aside class="sidebar">
-            <div class="logo"><div class="logo-icon">🛸</div><div class="logo-text">SPACE-DOCX</div></div>
-            <a class="nav-item active" onclick="mostrarSecao('analisar')">🔍 Analisar</a>
+            <div class="logo"><div class="logo-icon">🛡️</div><div class="logo-text">SPACE-DOCX</div></div>
+            <a class="nav-item active" onclick="mostrarSecao('analisar')">🔍 Analisar Documento</a>
             <a class="nav-item" onclick="mostrarSecao('historico')">📋 Histórico</a>
             <a href="/planos" class="nav-item">💰 Planos</a>
-            <a href="/logout" class="nav-item" style="margin-top: 20px; color: #ef4444;">🚪 Sair</a>
+            <a href="/logout" class="nav-item" style="margin-top: 40px; color: #ef4444;">🚪 Sair</a>
         </aside>
         <main class="main">
             <div class="header">
@@ -63,7 +67,8 @@
                     <h3>Validar Documento</h3>
                     <div class="upload-area" id="uploadArea">
                         <div class="upload-icon">📄</div>
-                        <div>Clique ou arraste seu PDF</div>
+                        <div>Clique ou arraste seu PDF aqui</div>
+                        <div style="font-size: 12px; margin-top: 8px; color: #a1a1aa;">Máx. 10MB</div>
                         <input type="file" id="pdfFile" accept=".pdf" style="display:none">
                     </div>
                     <div id="fileInfo" class="file-info" style="display:none"></div>
@@ -81,19 +86,13 @@
     <script>
         let arquivoSelecionado = null;
         let animacaoInterval = null;
-        let tempoDecorrido = 0;
         
-        const mensagensVariadas = [
-            "🔍 Analisando metadados do documento...",
-            "📊 Verificando estrutura do PDF...",
-            "🔐 Checando assinaturas digitais...",
-            "📋 Validando datas de criação...",
-            "🛡️ Verificando ferramentas suspeitas...",
-            "🔎 Analisando camadas internas...",
-            "⚙️ Processando object streams...",
-            "📑 Verificando fontes e cores...",
-            "✅ Quase lá...",
-            "🎯 Finalizando análise..."
+        const mensagensAnalise = [
+            "🔍 Processando documento...",
+            "📊 Validando informações...",
+            "🔐 Verificando autenticidade...",
+            "⚙️ Analisando estrutura...",
+            "✅ Finalizando análise..."
         ];
 
         async function carregarUsuario() {
@@ -103,6 +102,20 @@
                 document.getElementById('userInfo').innerHTML = `${d.nome} | ${d.email}`;
                 document.getElementById('planoInfo').innerHTML = d.plano?.toUpperCase() || 'TRIAL';
                 document.getElementById('analisesInfo').innerHTML = `📊 Análises restantes: ${d.analises_restantes || 5}`;
+                
+                if (d.status === 'bloqueado') {
+                    document.getElementById('uploadCard').innerHTML = `
+                        <div class="warning-badge">
+                            ⚠️ Seu teste gratuito expirou. <a href="/planos" style="color:#3b82f6;">Adquira um plano</a> para continuar.
+                        </div>
+                        <div class="upload-area" style="opacity:0.5; cursor:not-allowed;">
+                            <div class="upload-icon">🔒</div>
+                            <div>Conta bloqueada</div>
+                            <div style="font-size:12px;">Renove seu plano para validar documentos</div>
+                        </div>
+                    `;
+                    document.getElementById('btnAnalisar').disabled = true;
+                }
             } catch(e) { console.error(e); }
         }
 
@@ -114,11 +127,11 @@
                     document.getElementById('historicoList').innerHTML = '<div style="text-align:center;padding:40px;color:#a1a1aa;">Nenhuma análise realizada ainda</div>'; 
                     return; 
                 }
-                let html = '<table class="historico-table"><thead><tr><th>ARQUIVO</th><th>STATUS</th><th>SCORE</th></tr></thead><tbody>';
-                d.forEach(i => { 
-                    let cor = i.status === 'AUTÊNTICO' ? '#22c55e' : (i.status === 'FRAUDE' ? '#ef4444' : '#f59e0b');
-                    html += `<tr><td>${i.arquivo}</td><td style="color:${cor}">${i.status}</td><td>${i.score}/100</td></tr>`; 
-                });
+                let html = '<table class="historico-table"><thead><tr><th>DATA</th><th>ARQUIVO</th><th>STATUS</th><th>SCORE</th></tr></thead><tbody>';
+                for (const item of d) {
+                    let cor = item.status === 'AUTÊNTICO' ? '#22c55e' : (item.status === 'FRAUDE' ? '#ef4444' : '#f59e0b');
+                    html += `<tr><td>${item.data}</td><td>${item.arquivo}</td><td style="color:${cor}">${item.status}</td><td>${item.score}/100</td></tr>`;
+                }
                 html += '</tbody></table>';
                 document.getElementById('historicoList').innerHTML = html;
             } catch(e) { console.error(e); }
@@ -155,24 +168,16 @@
         }
 
         function exibirResultados(data) {
-            const cor = data.status_color || (data.status === 'AUTÊNTICO' ? '#22c55e' : (data.status === 'FRAUDE' ? '#ef4444' : '#f59e0b'));
+            const cor = data.status_color || '#f59e0b';
             const scoreAngle = (data.score / 100) * 360;
-            
             document.getElementById('resultado').innerHTML = `
                 <div class="result-card">
                     <div class="score-circle" style="background: conic-gradient(${cor} ${scoreAngle}deg, #1a1a1a ${scoreAngle}deg)">
                         <span class="score-value" style="color:${cor}">${data.score}</span>
                     </div>
                     <div class="status" style="color:${cor}">${data.status_icon || ''} ${data.status}</div>
-                    <div>${data.rastros.map(r => `<div class="rastro-item">${r}</div>`).join('')}</div>
-                    <div style="margin-top:16px;font-size:12px;color:#666">
-                        <strong>📋 Metadados:</strong><br>
-                        Produtor: ${data.metadados?.producer || 'N/A'}<br>
-                        Criador: ${data.metadados?.creator || 'N/A'}<br>
-                        ${data.estrutura?.linearized ? '✅ Linearizado' : '⚠️ Não linearizado'} | Versão: ${data.estrutura?.version || 'N/A'} | Páginas: ${data.estrutura?.pages || 'N/A'}
-                    </div>
-                    <div style="margin-top:16px;font-size:12px;color:#3b82f6;text-align:center">
-                        📅 ${data.data} | 🔑 ${data.analises_restantes ? `Análises restantes: ${data.analises_restantes}` : ''}
+                    <div style="margin-top:16px;font-size:12px;color:#a1a1aa;">
+                        📅 ${data.data} | Análise concluída com sucesso
                     </div>
                 </div>
             `;
@@ -187,72 +192,42 @@
             
             const btn = document.getElementById('btnAnalisar');
             const uploadCard = document.getElementById('uploadCard');
-            const resultadoDiv = document.getElementById('resultado');
             
-            resultadoDiv.style.display = 'none';
             btn.disabled = true;
+            document.getElementById('resultado').style.display = 'none';
             
-            // Mostrar animação
             uploadCard.innerHTML = `
                 <div class="loading-animation">
                     <div class="spinner"></div>
-                    <div id="mensagemAnimacao" style="color: #3b82f6; font-size: 16px; margin-bottom: 10px;">🔍 Analisando documento...</div>
-                    <div id="tempoAnimacao" style="color: #a1a1aa; font-size: 12px;">Tempo estimado: 30-45 segundos</div>
-                    <div style="margin-top: 20px; font-size: 11px; color: #2a2a2a;">Processamento seguro e criptografado</div>
+                    <div id="mensagemAnimacao" style="color: #3b82f6; font-size: 16px; margin-bottom: 10px;">🔍 Processando documento...</div>
+                    <div id="tempoAnimacao" style="color: #a1a1aa; font-size: 12px;">Tempo estimado: 20-35 segundos</div>
                 </div>
             `;
             
-            // Animação de mensagens variadas
             let msgIndex = 0;
-            tempoDecorrido = 0;
+            let tempoDecorrido = 0;
             animacaoInterval = setInterval(() => {
                 tempoDecorrido++;
-                const segundosRestantes = Math.max(0, 45 - tempoDecorrido);
                 const msgDiv = document.getElementById('mensagemAnimacao');
                 const tempoDiv = document.getElementById('tempoAnimacao');
-                if(msgDiv) msgDiv.innerHTML = mensagensVariadas[msgIndex % mensagensVariadas.length];
-                if(tempoDiv) tempoDiv.innerHTML = `⏱️ Processando... ~${segundosRestantes}s restantes`;
+                if(msgDiv) msgDiv.innerHTML = mensagensAnalise[msgIndex % mensagensAnalise.length];
+                if(tempoDiv) tempoDiv.innerHTML = `⏱️ Processando... ~${Math.max(0, 35 - tempoDecorrido)}s restantes`;
                 msgIndex++;
             }, 3000);
             
-            // Enviar arquivo
             const formData = new FormData();
             formData.append('pdf', arquivoSelecionado);
             
             try {
                 const response = await fetch('/api/analisar', { method: 'POST', body: formData });
                 const data = await response.json();
-                
                 clearInterval(animacaoInterval);
                 
-                // Restaurar o upload card
-                uploadCard.innerHTML = `
-                    <h3>Validar Documento</h3>
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-icon">📄</div>
-                        <div>Clique ou arraste seu PDF</div>
-                        <input type="file" id="pdfFile" accept=".pdf" style="display:none">
-                    </div>
-                    <div id="fileInfo" class="file-info" style="display:none"></div>
-                    <button class="btn-primary" id="btnAnalisar" disabled>Analisar Documento</button>
-                `;
-                
-                // Recriar eventos
-                const newUploadArea = document.getElementById('uploadArea');
-                const newPdfFile = document.getElementById('pdfFile');
-                newUploadArea.onclick = () => newPdfFile.click();
-                newUploadArea.ondragover = (e) => { e.preventDefault(); newUploadArea.style.borderColor = '#3b82f6'; };
-                newUploadArea.ondragleave = () => newUploadArea.style.borderColor = '#2a2a2a';
-                newUploadArea.ondrop = (e) => {
-                    e.preventDefault();
-                    const file = e.dataTransfer.files[0];
-                    if(file && file.type === 'application/pdf') processarArquivo(file);
-                    else alert('Selecione um arquivo PDF');
-                };
-                newPdfFile.onchange = (e) => { if(e.target.files[0]) processarArquivo(e.target.files[0]); };
-                
-                document.getElementById('btnAnalisar').disabled = true;
-                arquivoSelecionado = null;
+                if(data.bloqueado) {
+                    alert(data.error);
+                    window.location.href = '/planos';
+                    return;
+                }
                 
                 if(response.ok && data.success) {
                     exibirResultados(data);
@@ -262,12 +237,12 @@
             } catch(error) {
                 clearInterval(animacaoInterval);
                 alert('Erro: ' + error.message);
+            } finally {
                 location.reload();
             }
         };
         
         carregarUsuario();
-        carregarHistorico();
         setInterval(() => carregarUsuario(), 30000);
     </script>
 </body>
