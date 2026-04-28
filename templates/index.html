@@ -2,54 +2,258 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space-Docx | Validação de Documentos Anti-Fraude</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Space-Docx | Proteja seu negócio contra fraudes documentais</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #1f1f1f; }
-        .logo { display: flex; align-items: center; gap: 8px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.5; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header - Responsivo */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #1f1f1f; flex-wrap: wrap; gap: 16px; }
+        .logo { display: flex; align-items: center; gap: 10px; }
         .logo-icon { font-size: 32px; }
-        .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav a { color: #a1a1aa; text-decoration: none; margin-left: 32px; }
-        .nav a:hover { color: #3b82f6; }
-        .btn-login { background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 8px 20px; border-radius: 10px; color: white !important; }
-        .hero { text-align: center; padding: 80px 0; }
-        .hero h1 { font-size: 48px; font-weight: 800; background: linear-gradient(135deg, #fff, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
-        .hero p { font-size: 18px; color: #a1a1aa; max-width: 600px; margin: 0 auto 32px; }
-        .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 14px 32px; border-radius: 12px; color: white; text-decoration: none; display: inline-block; margin: 0 8px; font-weight: 600; transition: transform 0.2s; }
-        .btn-primary:hover { transform: translateY(-2px); }
-        .btn-secondary { background: #1f1f1f; padding: 14px 32px; border-radius: 12px; color: white; text-decoration: none; display: inline-block; border: 1px solid #2a2a2a; }
-        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin: 60px 0; }
-        .feature-card { background: #111; border: 1px solid #1f1f1f; border-radius: 20px; padding: 32px; text-align: center; transition: transform 0.3s; }
-        .feature-card:hover { transform: translateY(-4px); border-color: #3b82f6; }
-        .feature-icon { font-size: 48px; margin-bottom: 16px; }
-        .feature-card h3 { margin-bottom: 12px; }
-        .feature-card p { color: #a1a1aa; font-size: 14px; line-height: 1.5; }
-        .footer { text-align: center; padding: 40px 0; border-top: 1px solid #1f1f1f; margin-top: 60px; color: #a1a1aa; font-size: 12px; }
-        .footer a { color: #3b82f6; text-decoration: none; }
-        @media (max-width: 768px) { .hero h1 { font-size: 32px; } .features { grid-template-columns: 1fr; } .nav { display: none; } }
+        .logo-text { font-size: 20px; font-weight: 800; color: #dc2626; }
+        .logo-badge { background: #dc2626; padding: 2px 10px; border-radius: 20px; font-size: 10px; color: white; font-weight: 600; }
+        .nav { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .nav a { color: #a0a0a0; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        .nav a:hover { color: #dc2626; }
+        .btn-login { background: #dc2626; padding: 8px 20px; border-radius: 30px; color: white !important; font-weight: 600; }
+        
+        /* Hero */
+        .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 0 40px; gap: 40px; flex-wrap: wrap; }
+        .hero-content { flex: 1; min-width: 280px; }
+        .hero-badge { background: rgba(220,38,38,0.12); color: #dc2626; padding: 4px 12px; border-radius: 30px; font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 20px; }
+        .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
+        .hero h1 span { color: #dc2626; }
+        .hero p { font-size: 16px; color: #a0a0a0; margin-bottom: 30px; line-height: 1.6; }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-primary { background: #dc2626; color: white; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 700; display: inline-block; transition: transform 0.2s; }
+        .btn-secondary { background: #1a1a1a; border: 1px solid #dc2626; color: #dc2626; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 700; transition: transform 0.2s; }
+        .btn-primary:hover, .btn-secondary:hover { transform: translateY(-2px); }
+        .hero-image { flex: 1; text-align: center; min-width: 200px; }
+        .shield-icon { font-size: 140px; }
+        
+        /* Stats com valores economizados */
+        .stats-economia { background: linear-gradient(135deg, #111, #0a0a0a); border-radius: 24px; padding: 40px; margin: 40px 0; text-align: center; border: 1px solid #1f1f1f; }
+        .stats-economia h3 { font-size: 20px; margin-bottom: 24px; color: #dc2626; }
+        .economia-grid { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
+        .economia-card { text-align: center; }
+        .economia-valor { font-size: 42px; font-weight: 800; color: #dc2626; }
+        .economia-label { font-size: 14px; color: #888; margin-top: 8px; }
+        .economia-desc { font-size: 12px; color: #555; margin-top: 4px; }
+        
+        /* Ciclo de Proteção - Melhorado */
+        .ciclo { background: #111; border-radius: 32px; padding: 48px 32px; margin: 48px 0; border: 1px solid #1f1f1f; }
+        .section-title { text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+        .section-subtitle { text-align: center; color: #a0a0a0; margin-bottom: 40px; font-size: 15px; }
+        .ciclo-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .ciclo-step { flex: 1; min-width: 180px; text-align: center; background: #1a1a1a; border-radius: 20px; padding: 24px 16px; transition: all 0.3s; }
+        .ciclo-step:hover { transform: translateY(-5px); background: #222; }
+        .step-number { width: 40px; height: 40px; background: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-weight: 800; color: white; }
+        .step-icon { font-size: 36px; margin-bottom: 12px; }
+        .step-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #dc2626; }
+        .step-desc { font-size: 13px; color: #888; line-height: 1.4; }
+        .ciclo-arrow { font-size: 28px; color: #dc2626; }
+        
+        /* Features */
+        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 48px 0; }
+        .feature-card { background: #111; border: 1px solid #1f1f1f; border-radius: 24px; padding: 28px; transition: all 0.3s; }
+        .feature-card:hover { border-color: #dc2626; transform: translateY(-4px); }
+        .feature-icon { font-size: 44px; margin-bottom: 16px; }
+        .feature-card h3 { font-size: 18px; margin-bottom: 12px; }
+        .feature-card p { color: #888; font-size: 14px; line-height: 1.5; }
+        
+        /* CTA */
+        .cta { background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 28px; padding: 48px 32px; text-align: center; margin: 48px 0; }
+        .cta h2 { font-size: 28px; margin-bottom: 12px; color: white; }
+        .cta p { color: rgba(255,255,255,0.85); margin-bottom: 28px; }
+        .btn-cta { background: white; color: #dc2626; padding: 14px 40px; border-radius: 40px; text-decoration: none; font-weight: 800; display: inline-block; transition: transform 0.2s; }
+        .btn-cta:hover { transform: translateY(-3px); }
+        
+        /* Footer */
+        .footer { text-align: center; padding: 40px 0 30px; border-top: 1px solid #1f1f1f; margin-top: 40px; color: #666; font-size: 12px; }
+        .footer a { color: #dc2626; text-decoration: none; }
+        .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+        .footer-links a { color: #888; font-size: 12px; }
+        
+        /* Responsivo Mobile */
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+            .header { flex-direction: column; text-align: center; }
+            .nav { justify-content: center; }
+            .hero { padding: 40px 0 20px; text-align: center; }
+            .hero h1 { font-size: 28px; }
+            .hero-buttons { justify-content: center; }
+            .shield-icon { font-size: 100px; }
+            .economia-valor { font-size: 32px; }
+            .economia-grid { gap: 24px; }
+            .ciclo-container { flex-direction: column; }
+            .ciclo-arrow { transform: rotate(90deg); }
+            .ciclo-step { width: 100%; }
+            .features { grid-template-columns: 1fr; }
+            .cta h2 { font-size: 22px; }
+            .stats-economia { padding: 24px; }
+            .ciclo { padding: 32px 20px; }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 24px; }
+            .economia-valor { font-size: 28px; }
+            .btn-primary, .btn-secondary { padding: 10px 20px; font-size: 14px; }
+            .section-title { font-size: 24px; }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animated { animation: fadeInUp 0.6s ease-out; }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <div class="logo"><div class="logo-icon">🛡️</div><div class="logo-text">SPACE-DOCX</div></div>
-            <div class="nav"><a href="#features">Recursos</a><a href="/planos">Planos</a><a href="/politicas">Privacidade</a><a href="/login" class="btn-login">Entrar</a></div>
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <div class="logo-text">SPACE-DOCX</div>
+                <div class="logo-badge">Anti-Fraude</div>
+            </div>
+            <div class="nav">
+                <a href="#funcionamento">Como Funciona</a>
+                <a href="#recursos">Recursos</a>
+                <a href="/planos">Planos</a>
+                <a href="/politicas">Privacidade</a>
+                <a href="/login" class="btn-login">Entrar</a>
+            </div>
         </div>
+
+        <!-- Hero Section -->
         <div class="hero">
-            <h1>Validação de Documentos<br>com Tecnologia Anti-Fraude</h1>
-            <p>Proteja sua empresa contra documentos falsos. Detecte automaticamente faturas, comprovantes e documentos bancários fraudulentos.</p>
-            <a href="/planos" class="btn-primary">Começar Agora</a>
-            <a href="/gerar-chave-teste" class="btn-secondary">Teste Grátis 7 Dias</a>
+            <div class="hero-content animated">
+                <div class="hero-badge">🔒 Proteção Inteligente</div>
+                <h1>Reduza <span>até 98%</span> dos prejuízos com <span>documentos falsos</span></h1>
+                <p>Validação automática de faturas, comprovantes e documentos bancários. Detecte fraudes antes que causem danos ao seu negócio.</p>
+                <div class="hero-buttons">
+                    <a href="/planos" class="btn-primary">Começar Agora</a>
+                    <a href="/gerar-chave-teste" class="btn-secondary">Teste Grátis 7 Dias</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="shield-icon">🛡️</div>
+            </div>
         </div>
-        <div class="features" id="features">
-            <div class="feature-card"><div class="feature-icon">🔍</div><h3>Detecção de Fraudes</h3><p>Identifica documentos criados no Canva, Photoshop, Illustrator e outras ferramentas suspeitas.</p></div>
-            <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Análise de Autenticidade</h3><p>Verifica a legitimidade do documento com tecnologia avançada.</p></div>
-            <div class="feature-card"><div class="feature-icon">📊</div><h3>Score de Confiança</h3><p>Classificação automática: AUTÊNTICO, SUSPEITO ou FRAUDE com score de 0 a 100.</p></div>
+
+        <!-- Stats com valores economizados -->
+        <div class="stats-economia">
+            <h3>📊 O quanto sua empresa pode economizar</h3>
+            <div class="economia-grid">
+                <div class="economia-card">
+                    <div class="economia-valor">R$ 49.800</div>
+                    <div class="economia-label">Economia anual média</div>
+                    <div class="economia-desc">empresas de pequeno porte</div>
+                </div>
+                <div class="economia-card">
+                    <div class="economia-valor">R$ 247.500</div>
+                    <div class="economia-label">Economia anual média</div>
+                    <div class="economia-desc">empresas de médio porte</div>
+                </div>
+                <div class="economia-card">
+                    <div class="economia-valor">US$ 287.000</div>
+                    <div class="economia-label">Economia anual média</div>
+                    <div class="economia-desc">empresas internacionais</div>
+                </div>
+            </div>
+            <div style="margin-top: 24px; font-size: 12px; color: #555;">*Baseado em dados reais de clientes Space-Docx</div>
         </div>
-        <div class="footer"><p>© 2026 Space-Docx. 2 anos de experiência em segurança documental. | <a href="/politicas">Política de Privacidade</a> | <a href="/planos">Planos</a></p></div>
+
+        <!-- Ciclo de Proteção Melhorado -->
+        <div class="ciclo" id="funcionamento">
+            <h2 class="section-title">🛡️ Ciclo de Proteção Space-Docx</h2>
+            <p class="section-subtitle">4 etapas para blindar sua empresa contra fraudes documentais</p>
+            <div class="ciclo-container">
+                <div class="ciclo-step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">📤</div>
+                    <div class="step-title">Upload do Documento</div>
+                    <div class="step-desc">Cliente ou colaborador envia a fatura, comprovante ou documento bancário</div>
+                </div>
+                <div class="ciclo-arrow">→</div>
+                <div class="ciclo-step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">🔍</div>
+                    <div class="step-title">Análise Automática</div>
+                    <div class="step-desc">Nossa IA verifica metadados, estrutura, assinaturas e ferramentas suspeitas</div>
+                </div>
+                <div class="ciclo-arrow">→</div>
+                <div class="ciclo-step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">📊</div>
+                    <div class="step-title">Score de Autenticidade</div>
+                    <div class="step-desc">Resultado de 0 a 100 pontos com classificação clara</div>
+                </div>
+                <div class="ciclo-arrow">→</div>
+                <div class="ciclo-step">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">✅</div>
+                    <div class="step-title">Decisão em Segundos</div>
+                    <div class="step-desc">Aprove ou rejeite o documento com total segurança</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="features" id="recursos">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Detecção de Fraudes</h3>
+                <p>Identifica documentos criados no Canva, Photoshop, Illustrator, Corel e outras ferramentas suspeitas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Resultado Rápido</h3>
+                <p>Análise completa em 30-45 segundos. Decisões ágeis para seu negócio não parar.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Redução de Prejuízos</h3>
+                <p>Empresas que usam o Space-Docx reduzem em até 98% as perdas com documentos fraudulentos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Segurança Total</h3>
+                <p>Criptografia de ponta a ponta e conformidade com a LGPD.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Histórico Completo</h3>
+                <p>Todas as validações são armazenadas para consulta e auditoria.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Garantia de Proteção</h3>
+                <p>Se sofrer prejuízo com documento aprovado, devolvemos 100% do valor.</p>
+            </div>
+        </div>
+
+        <!-- CTA Final -->
+        <div class="cta">
+            <h2>Pronto para proteger sua empresa?</h2>
+            <p>Junte-se a mais de 10.000 empresas que já confiam no Space-Docx</p>
+            <a href="/planos" class="btn-cta">Começar Teste Gratuito →</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-links">
+                <a href="/">Início</a>
+                <a href="/planos">Planos</a>
+                <a href="/politicas">Política de Privacidade</a>
+                <a href="/login">Área do Cliente</a>
+            </div>
+            <p>© 2026 Space-Docx. Tecnologia anti-fraude para empresas. | Reduza prejuízos com documentos falsos</p>
+        </div>
     </div>
 </body>
 </html>
