@@ -10,9 +10,9 @@
         .container { width: 100%; max-width: 450px; padding: 24px; }
         .card { background: #111; border: 1px solid #2a2a2a; border-radius: 24px; padding: 40px; }
         .logo { text-align: center; margin-bottom: 32px; }
-        .logo-icon { font-size: 48px; }
-        .logo-text { font-size: 22px; font-weight: 700; color: #dc2626; }
-        h1 { font-size: 28px; margin-bottom: 8px; text-align: center; }
+        .logo-svg { width: 48px; height: 48px; margin: 0 auto; }
+        .logo-text { font-size: 22px; font-weight: 700; color: #dc2626; margin-top: 12px; }
+        h1 { font-size: 28px; margin-bottom: 8px; text-align: center; margin-top: 16px; }
         .subtitle { color: #a0a0a0; font-size: 14px; margin-bottom: 32px; text-align: center; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 13px; color: #a0a0a0; margin-bottom: 8px; }
@@ -32,7 +32,14 @@
 <body>
     <div class="container">
         <div class="card">
-            <div class="logo"><div class="logo-icon">🛡️</div><div class="logo-text">SPACE-DOCX</div></div>
+            <div class="logo">
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 L50 10Z" stroke="#dc2626" stroke-width="4" fill="none"/>
+                    <path d="M50 30 L65 40 L65 60 L50 70 L35 60 L35 40 L50 30Z" stroke="#dc2626" stroke-width="3" fill="none"/>
+                    <circle cx="50" cy="50" r="8" fill="#dc2626"/>
+                </svg>
+                <div class="logo-text">SPACE-DOCX</div>
+            </div>
             <h1>Bem-vindo de volta</h1>
             <p class="subtitle">Acesse sua conta e proteja seu negócio</p>
 
