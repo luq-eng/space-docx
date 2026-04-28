@@ -1,1 +1,124 @@
-
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Space-Docx</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+        .app { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #111; border-right: 1px solid #1f1f1f; padding: 24px; position: fixed; height: 100vh; }
+        .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #1f1f1f; }
+        .logo-icon { font-size: 28px; }
+        .logo-text { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-item { display: block; padding: 12px 16px; border-radius: 12px; color: #a1a1aa; text-decoration: none; margin-bottom: 8px; }
+        .nav-item:hover, .nav-item.active { background: #1a1a1a; color: #fff; }
+        .main { flex: 1; margin-left: 260px; padding: 24px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #1f1f1f; }
+        .plan-badge { padding: 6px 12px; background: #1a1a1a; border-radius: 20px; font-size: 12px; color: #3b82f6; }
+        .logout-btn { padding: 8px 16px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; color: #a1a1aa; text-decoration: none; }
+        .upload-card { background: #111; border: 1px solid #1f1f1f; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+        .upload-area { border: 2px dashed #2a2a2a; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; }
+        .upload-area:hover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+        .upload-icon { font-size: 48px; margin-bottom: 12px; }
+        .file-info { margin-top: 16px; padding: 12px; background: #1a1a1a; border-radius: 10px; font-size: 13px; color: #22c55e; }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 16px; }
+        .result-card { background: #111; border: 1px solid #1f1f1f; border-radius: 16px; padding: 24px; margin-top: 24px; }
+        .score { font-size: 48px; font-weight: 700; text-align: center; margin: 20px 0; }
+        .status { text-align: center; font-size: 24px; margin-bottom: 20px; }
+        .rastro-item { padding: 10px; background: #1a1a1a; border-radius: 8px; margin-bottom: 8px; }
+        .historico-table { width: 100%; border-collapse: collapse; }
+        .historico-table th, .historico-table td { padding: 12px; text-align: left; border-bottom: 1px solid #1f1f1f; }
+        @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo"><div class="logo-icon">🛸</div><div class="logo-text">SPACE-DOCX</div></div>
+            <a href="#" class="nav-item active" onclick="mostrarSecao('analisar')">🔍 Analisar</a>
+            <a href="#" class="nav-item" onclick="mostrarSecao('historico')">📋 Histórico</a>
+            <a href="/planos" class="nav-item">💰 Planos</a>
+            <a href="/logout" class="nav-item" style="margin-top: 20px; color: #ef4444;">🚪 Sair</a>
+        </aside>
+        <main class="main">
+            <div class="header">
+                <div><h1>Painel</h1><p id="userInfo">Carregando...</p></div>
+                <div class="plan-badge" id="planoInfo">-</div>
+                <a href="/logout" class="logout-btn">Sair</a>
+            </div>
+            <div id="secaoAnalisar">
+                <div class="upload-card">
+                    <h3>Validar Documento</h3>
+                    <div class="upload-area" id="uploadArea"><div class="upload-icon">📄</div><div>Clique ou arraste seu PDF</div><input type="file" id="pdfFile" accept=".pdf" style="display:none"></div>
+                    <div id="fileInfo" class="file-info" style="display:none"></div>
+                    <button class="btn-primary" id="btnAnalisar" disabled>Analisar</button>
+                </div>
+                <div id="resultado" style="display:none"></div>
+            </div>
+            <div id="secaoHistorico" style="display:none">
+                <div class="upload-card"><h3>Histórico</h3><div id="historicoList">Carregando...</div></div>
+            </div>
+        </main>
+    </div>
+    <script>
+        let arquivo = null;
+        async function carregarUsuario() {
+            const r = await fetch('/api/usuario');
+            const d = await r.json();
+            document.getElementById('userInfo').innerHTML = `${d.nome} | ${d.email}`;
+            document.getElementById('planoInfo').innerHTML = d.plano.toUpperCase();
+        }
+        async function carregarHistorico() {
+            const r = await fetch('/api/historico');
+            const d = await r.json();
+            if(d.length===0){ document.getElementById('historicoList').innerHTML='<p>Nenhuma análise</p>'; return; }
+            let html='<table class="historico-table"><tr><th>Arquivo</th><th>Status</th><th>Score</th></tr>';
+            d.forEach(i=>{ html+=`<tr><td>${i.arquivo}</td><td>${i.status}</td><td>${i.score}/100</td></tr>`; });
+            html+='</table>';
+            document.getElementById('historicoList').innerHTML=html;
+        }
+        function mostrarSecao(secao){
+            document.getElementById('secaoAnalisar').style.display= secao==='analisar'?'block':'none';
+            document.getElementById('secaoHistorico').style.display= secao==='historico'?'block':'none';
+            if(secao==='historico') carregarHistorico();
+        }
+        const uploadArea=document.getElementById('uploadArea');
+        const pdfFile=document.getElementById('pdfFile');
+        uploadArea.onclick=()=>pdfFile.click();
+        uploadArea.ondragover=e=>{e.preventDefault();uploadArea.style.borderColor='#3b82f6';};
+        uploadArea.ondrop=e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')processarArquivo(f);else alert('Selecione PDF');};
+        pdfFile.onchange=e=>{if(e.target.files[0])processarArquivo(e.target.files[0]);};
+        function processarArquivo(f){
+            if(f.size>10*1024*1024){alert('Max 10MB');return;}
+            arquivo=f;
+            document.getElementById('fileInfo').style.display='block';
+            document.getElementById('fileInfo').innerHTML=`✅ ${f.name} (${(f.size/1024).toFixed(0)} KB)`;
+            document.getElementById('btnAnalisar').disabled=false;
+        }
+        document.getElementById('btnAnalisar').onclick=async()=>{
+            if(!arquivo)return;
+            const btn=document.getElementById('btnAnalisar');
+            btn.disabled=true;btn.textContent='Analisando...';
+            const fd=new FormData();fd.append('pdf',arquivo);
+            const r=await fetch('/api/analisar',{method:'POST',body:fd});
+            const d=await r.json();
+            if(d.success){
+                const cor=d.status==='AUTÊNTICO'?'#22c55e':(d.status==='FRAUDE'?'#ef4444':'#f59e0b');
+                document.getElementById('resultado').innerHTML=`
+                    <div class="result-card">
+                        <div class="score" style="color:${cor}">${d.score}/100</div>
+                        <div class="status" style="color:${cor}">${d.status}</div>
+                        <div>${d.rastros.map(r=>`<div class="rastro-item">${r}</div>`).join('')}</div>
+                        <div style="margin-top:16px;font-size:12px;color:#666">Produtor: ${d.metadados?.producer}<br>Criador: ${d.metadados?.creator}</div>
+                    </div>`;
+                document.getElementById('resultado').style.display='block';
+                carregarHistorico();
+            }else alert('Erro');
+            btn.disabled=false;btn.textContent='Analisar';arquivo=null;pdfFile.value='';document.getElementById('fileInfo').style.display='none';
+        };
+        carregarUsuario();
+    </script>
+</body>
+</html>
