@@ -401,57 +401,83 @@ def criar_pagamento():
     email = data.get('email')
     nome = data.get('nome')
     cpf = data.get('cpf')
+    card_token = data.get('card_token')
     
     if plano_id not in PLANOS:
         return jsonify({'error': 'Plano inválido'}), 400
     
     plano = PLANOS[plano_id]
     
-    transaction_payload = {
+    # 1. Preparar dados da transação conforme documentação
+    transaction_data = {
         "amount": plano['preco_centavos'],
         "currency": "BRL",
-        "payment_method": metodo,
+        "paymentMethod": "CREDIT_CARD" if metodo == 'credit_card' else "PIX",
         "customer": {
             "name": nome,
             "email": email,
-            "document": cpf
+            "document": {
+                "number": cpf,
+                "type": "CPF"
+            }
         },
-        "metadata": {
+        "metadata": json.dumps({
             "plano": plano_id,
-            "plano_nome": plano['nome']
-        }
+            "plano_nome": plano['nome'],
+            "plataforma": "space-docx"
+        }),
+        "postbackUrl": "https://space-docx-flim.vercel.app/api/webhook/hypercash",
+        "traceable": True,
+        "ip": obter_ip()
     }
     
-    if metodo == 'credit_card':
-        transaction_payload["card"] = {
-            "number": data.get('card_number'),
-            "holder_name": data.get('card_holder'),
-            "exp_month": data.get('card_exp_month'),
-            "exp_year": data.get('card_exp_year'),
-            "cvv": data.get('card_cvv')
+    # 2. Se for cartão, adicionar o card com hash (token)
+    if metodo == 'credit_card' and card_token:
+        transaction_data["card"] = {
+            "hash": card_token
         }
     
+    # 3. Se for PIX, adicionar prazo de expiração
+    if metodo == 'pix':
+        transaction_data["pix"] = {
+            "expiresInDays": 2
+        }
+    
+    # 4. Configurar autenticação Basic Auth
     auth_string = base64.b64encode(f"x:{HYPERCASH_SECRET_KEY}".encode()).decode()
     headers = {
         "Authorization": f"Basic {auth_string}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Accept": "application/json"
     }
+    
+    # 5. Endpoint correto conforme documentação
+    api_url = f"{HYPERCASH_API_URL}/user/transactions"
+    
+    print(f"[DEBUG] Enviando para: {api_url}")
+    print(f"[DEBUG] Payload: {transaction_data}")
     
     try:
         response = requests.post(
-            f"{HYPERCASH_API_URL}/transactions",
+            api_url,
             headers=headers,
-            json=transaction_payload,
+            json=transaction_data,
             timeout=60
         )
         
+        print(f"[DEBUG] Status: {response.status_code}")
+        print(f"[DEBUG] Response: {response.text}")
+        
         if response.status_code == 200 or response.status_code == 201:
             response_data = response.json()
+            transaction_id = response_data.get('data', {}).get('id') or response_data.get('id')
             
+            # Pagamento aprovado - criar/atualizar usuário
             if email in USUARIOS:
                 USUARIOS[email]['plano'] = plano_id
                 USUARIOS[email]['data_expiracao'] = (datetime.now() + timedelta(days=plano['dias'])).isoformat()
                 USUARIOS[email]['status'] = 'ativo'
+                USUARIOS[email]['tipo'] = 'pago'
             else:
                 novo_id = max([u['id'] for u in USUARIOS.values()] + [0]) + 1
                 USUARIOS[email] = {
@@ -459,41 +485,66 @@ def criar_pagamento():
                     'nome': nome,
                     'senha': hash_senha(uuid.uuid4().hex[:8]),
                     'plano': plano_id,
-                    'empresa': '',
+                    'empresa': data.get('empresa', ''),
                     'cpf': cpf,
-                    'cnpj': '',
-                    'cep': '',
-                    'telefone': '',
+                    'cnpj': data.get('cnpj', ''),
+                    'cep': data.get('cep', ''),
+                    'telefone': data.get('telefone', ''),
                     'data_expiracao': (datetime.now() + timedelta(days=plano['dias'])).isoformat(),
                     'status': 'ativo',
                     'tipo': 'pago'
                 }
             
             if metodo == 'pix':
+                pix_code = response_data.get('data', {}).get('pixCode') or response_data.get('pixCode')
                 return jsonify({
                     'success': True,
-                    'pix_code': response_data.get('pix_code', codigo_pix_gerado()),
-                    'pix_qrcode': response_data.get('pix_qrcode')
+                    'pix_code': pix_code,
+                    'transaction_id': transaction_id,
+                    'message': 'Pagamento via PIX gerado!'
                 })
             else:
                 return jsonify({
                     'success': True,
-                    'transaction_id': response_data.get('id'),
-                    'redirect': '/dashboard'
+                    'transaction_id': transaction_id,
+                    'redirect': '/dashboard',
+                    'message': 'Pagamento aprovado!'
                 })
+        
+        elif response.status_code == 401:
+            return jsonify({'success': False, 'error': 'Erro de autenticação. Verifique as chaves da HyperCash.'}), 401
+        
+        elif response.status_code == 422:
+            error_data = response.json()
+            error_msg = error_data.get('message', 'Dados inválidos. Verifique as informações do cartão.')
+            return jsonify({'success': False, 'error': error_msg}), 422
+        
         else:
-            error_msg = response.json().get('message', 'Falha no pagamento')
-            return jsonify({'success': False, 'error': error_msg}), 400
+            error_data = response.json()
+            error_msg = error_data.get('message', 'Falha no processamento do pagamento')
+            return jsonify({'success': False, 'error': error_msg}), response.status_code
             
+    except requests.exceptions.Timeout:
+        return jsonify({'success': False, 'error': 'Tempo limite excedido. Tente novamente.'}), 504
+    except requests.exceptions.ConnectionError:
+        return jsonify({'success': False, 'error': 'Erro de conexão com o gateway de pagamento.'}), 503
     except Exception as e:
-        return jsonify({'success': False, 'error': f'Erro: {str(e)}'}), 500
+        print(f"[ERROR] {str(e)}")
+        return jsonify({'success': False, 'error': f'Erro interno: {str(e)}'}), 500
 
-def codigo_pix_gerado():
-    return "00020101021226930014BR.GOV.BCB.PIX2572pix-h.hypercashbrasil.com.br/qr/v2/1234567890"
+@app.route('/api/webhook/hypercash', methods=['POST'])
+def webhook_hypercash():
+    """Recebe notificações de pagamento da HyperCash"""
+    data = request.json
+    print(f"[WEBHOOK] Recebido: {data}")
+    
+    # Processar confirmação de pagamento
+    # Atualizar status da transação
+    return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
     print("="*50)
     print("🚀 SPACE-DOCX - Servidor rodando")
     print("📍 http://localhost:5000")
     print("="*50)
-    app.run(host='0.0.0.0', port=10000)
+    app.run(host='0.0.0.0', port=10000, debug=True)
