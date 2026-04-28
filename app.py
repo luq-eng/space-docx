@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.secret_key = 'space-docx-super-secret-key-2026'
 CORS(app)
 
-# ==================== CONFIGURAÇÕES HYPERCASH ====================
+# ==================== CONFIGURAÇÕES ====================
 HYPERCASH_PUBLIC_KEY = "pk_b48f62cc1f920cdaaf9c7bea2cf1e0a20edba5f9"
 HYPERCASH_SECRET_KEY = "sk_b4ed44b6073bae4aed687393a6b7baf8e0047746"
 HYPERCASH_API_URL = "https://api.hypercashbrasil.com.br/api"
@@ -33,7 +33,6 @@ testes_utilizados_email = defaultdict(list)
 testes_utilizados_cep = defaultdict(list)
 
 CHAVES_TESTE = {}
-
 LIMITE_ANALISES_TESTE = 5
 analises_teste_contador = defaultdict(int)
 
@@ -84,12 +83,11 @@ USUARIOS = {
         'telefone': '(11) 99999-9999',
         'data_expiracao': (datetime.now() + timedelta(days=365)).isoformat(),
         'status': 'ativo',
-        'tipo': 'pago'
+        'tipo': 'pago',
+        'analises_restantes': 999999
     }
 }
-
 ANALISES = {}
-
 PLANOS = {
     'basico': {'id': 1, 'nome': 'Básico', 'preco': 49, 'preco_centavos': 4900, 'dias': 30, 'validacoes': 50},
     'profissional': {'id': 2, 'nome': 'Profissional', 'preco': 149, 'preco_centavos': 14900, 'dias': 30, 'validacoes': 300},
@@ -104,6 +102,19 @@ def login_required(f):
     def decorated(*args, **kwargs):
         if 'usuario_id' not in session:
             return redirect(url_for('login'))
+        
+        # Verificar se o usuário está bloqueado
+        if session.get('status') == 'bloqueado':
+            flash('❌ Sua conta está bloqueada. Renove seu plano para continuar.', 'error')
+            return redirect(url_for('planos'))
+        
+        # Verificar se expirou
+        data_expiracao = session.get('data_expiracao')
+        if data_expiracao and datetime.fromisoformat(data_expiracao) < datetime.now():
+            session['status'] = 'bloqueado'
+            flash('❌ Sua assinatura expirou. Renove seu plano.', 'error')
+            return redirect(url_for('planos'))
+        
         return f(*args, **kwargs)
     return decorated
 
@@ -119,30 +130,15 @@ def analisar_pdf(caminho):
             status_color = '#f59e0b'
             
             if any(f in texto for f in ['canva', 'photoshop', 'illustrator', 'corel', 'gimp']):
-                score = 0
-                status = 'FRAUDE'
-                status_icon = '🔴'
-                status_color = '#ef4444'
+                score, status, status_icon, status_color = 0, 'FRAUDE', '🔴', '#ef4444'
             elif any(f in texto for f in ['quadient', 'gmc', 'inspire']):
-                score = 100
-                status = 'AUTÊNTICO'
-                status_icon = '🟢'
-                status_color = '#22c55e'
+                score, status, status_icon, status_color = 100, 'AUTÊNTICO', '🟢', '#22c55e'
             elif any(f in texto for f in ['itau', 'bradesco', 'santander', 'caixa', 'nubank']):
-                score = 95
-                status = 'AUTÊNTICO'
-                status_icon = '🟢'
-                status_color = '#22c55e'
+                score, status, status_icon, status_color = 95, 'AUTÊNTICO', '🟢', '#22c55e'
             elif any(f in texto for f in ['pikepdf', 'exiftool']):
-                score = 30
-                status = 'SUSPEITO'
-                status_icon = '🟠'
-                status_color = '#f97316'
+                score, status, status_icon, status_color = 30, 'SUSPEITO', '🟠', '#f97316'
             else:
-                score = 50
-                status = 'VERIFICAR'
-                status_icon = '🟡'
-                status_color = '#f59e0b'
+                score, status, status_icon, status_color = 50, 'VERIFICAR', '🟡', '#f59e0b'
             
             if not pdf.is_linearized:
                 score -= 10
@@ -169,7 +165,7 @@ def analisar_pdf(caminho):
 # ==================== ROTAS ====================
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', planos=PLANOS)
 
 @app.route('/planos')
 def planos():
@@ -218,6 +214,7 @@ def login():
         senha = request.form.get('senha')
         chave_teste = request.form.get('chave_teste', '').strip()
         
+        # Tentar usar chave de teste
         if chave_teste and chave_teste in CHAVES_TESTE:
             chave_info = CHAVES_TESTE[chave_teste]
             if chave_info['usos'] >= chave_info['max_usos']:
@@ -229,19 +226,23 @@ def login():
                 session['usuario_email'] = chave_info['dono']['email'] or f"teste_{chave_teste}@temp.com"
                 session['plano'] = 'trial'
                 session['tipo'] = 'teste'
-                session['status'] = 'teste'
+                session['status'] = 'ativo'
                 session['data_expiracao'] = (datetime.now() + timedelta(days=chave_info['dias'])).isoformat()
                 session['analises_restantes'] = LIMITE_ANALISES_TESTE
                 analises_teste_contador[session['usuario_email']] = 0
                 flash(f'✅ Teste gratuito de {chave_info["dias"]} dias ativado! Você tem {LIMITE_ANALISES_TESTE} análises.', 'success')
                 return redirect(url_for('dashboard'))
         
+        # Login normal
         if email in USUARIOS and USUARIOS[email]['senha'] == hash_senha(senha):
             usuario = USUARIOS[email]
+            
+            # Verificar bloqueio
             if usuario.get('status') == 'bloqueado':
                 flash('❌ Sua conta está bloqueada. Renove seu plano.', 'error')
             elif datetime.fromisoformat(usuario['data_expiracao']) < datetime.now():
                 flash('❌ Sua assinatura expirou. Renove seu plano.', 'error')
+                USUARIOS[email]['status'] = 'bloqueado'
             else:
                 session['usuario_id'] = usuario['id']
                 session['usuario_nome'] = usuario['nome']
@@ -250,7 +251,7 @@ def login():
                 session['tipo'] = 'pago'
                 session['status'] = 'ativo'
                 session['data_expiracao'] = usuario['data_expiracao']
-                session['analises_restantes'] = 999999
+                session['analises_restantes'] = usuario.get('analises_restantes', 999999)
                 return redirect(url_for('dashboard'))
         else:
             flash('❌ E-mail ou senha inválidos', 'error')
@@ -271,13 +272,14 @@ def registro():
                 'senha': hash_senha(request.form.get('senha')),
                 'plano': 'trial',
                 'empresa': request.form.get('empresa'),
-                'cpf': request.form.get('cpf'),
-                'cnpj': request.form.get('cnpj'),
+                'cpf': request.form.get('cpf_cnpj'),
+                'cnpj': request.form.get('cpf_cnpj'),
                 'cep': request.form.get('cep'),
                 'telefone': request.form.get('telefone'),
                 'data_expiracao': (datetime.now() + timedelta(days=7)).isoformat(),
-                'status': 'teste',
-                'tipo': 'teste'
+                'status': 'ativo',
+                'tipo': 'teste',
+                'analises_restantes': LIMITE_ANALISES_TESTE
             }
             flash('Cadastro realizado! Faça login.', 'success')
             return redirect(url_for('login'))
@@ -297,25 +299,35 @@ def dashboard():
                           plano=session.get('plano'),
                           tipo=session.get('tipo'),
                           analises_restantes=session.get('analises_restantes', 'Ilimitado'),
-                          expiracao=session.get('data_expiracao'))
+                          expiracao=session.get('data_expiracao'),
+                          status=session.get('status'))
 
 @app.route('/api/analisar', methods=['POST'])
 @login_required
 def analisar():
+    # Verificar se usuário não está bloqueado
+    if session.get('status') == 'bloqueado':
+        return jsonify({'error': 'Conta bloqueada. Renove seu plano.', 'bloqueado': True, 'redirect': '/planos'}), 403
+    
     tipo = session.get('tipo')
     email = session.get('usuario_email')
     
+    # Verificar expiração
+    data_expiracao = session.get('data_expiracao')
+    if data_expiracao and datetime.fromisoformat(data_expiracao) < datetime.now():
+        session['status'] = 'bloqueado'
+        return jsonify({'error': 'Assinatura expirada. Renove seu plano.', 'bloqueado': True, 'redirect': '/planos'}), 403
+    
+    # Verificar análises restantes para usuário teste
     if tipo == 'teste':
-        analises_feitas = analises_teste_contador.get(email, 0)
-        if analises_feitas >= LIMITE_ANALISES_TESTE:
+        analises_restantes = session.get('analises_restantes', 0)
+        if analises_restantes <= 0:
             session['status'] = 'bloqueado'
-            return jsonify({
-                'error': '❌ Seu teste gratuito expirou! Adquira um plano para continuar.',
-                'bloqueado': True,
-                'redirect': '/planos'
-            }), 403
-        analises_teste_contador[email] = analises_feitas + 1
-        session['analises_restantes'] = LIMITE_ANALISES_TESTE - (analises_feitas + 1)
+            return jsonify({'error': 'Seu teste gratuito acabou! Adquira um plano para continuar.', 'bloqueado': True, 'redirect': '/planos'}), 403
+        
+        # Decrementar análises restantes
+        session['analises_restantes'] = analises_restantes - 1
+        analises_teste_contador[email] = analises_teste_contador.get(email, 0) + 1
     
     if 'pdf' not in request.files:
         return jsonify({'error': 'Nenhum arquivo'}), 400
@@ -324,6 +336,7 @@ def analisar():
     if not arquivo.filename.endswith('.pdf'):
         return jsonify({'error': 'Formato inválido. Apenas PDF'}), 400
     
+    # Simular tempo de análise
     tempo_analise = random.randint(20, 35)
     time.sleep(tempo_analise)
     
@@ -401,145 +414,47 @@ def criar_pagamento():
     email = data.get('email')
     nome = data.get('nome')
     cpf = data.get('cpf')
-    card_token = data.get('card_token')
     
     if plano_id not in PLANOS:
         return jsonify({'error': 'Plano inválido'}), 400
     
     plano = PLANOS[plano_id]
     
-    # 1. Preparar dados da transação conforme documentação
-    transaction_data = {
-        "amount": plano['preco_centavos'],
-        "currency": "BRL",
-        "paymentMethod": "CREDIT_CARD" if metodo == 'credit_card' else "PIX",
-        "customer": {
-            "name": nome,
-            "email": email,
-            "document": {
-                "number": cpf,
-                "type": "CPF"
-            }
-        },
-        "metadata": json.dumps({
-            "plano": plano_id,
-            "plano_nome": plano['nome'],
-            "plataforma": "space-docx"
-        }),
-        "postbackUrl": "https://space-docx-flim.vercel.app/api/webhook/hypercash",
-        "traceable": True,
-        "ip": obter_ip()
-    }
-    
-    # 2. Se for cartão, adicionar o card com hash (token)
-    if metodo == 'credit_card' and card_token:
-        transaction_data["card"] = {
-            "hash": card_token
+    # Atualizar usuário
+    if email in USUARIOS:
+        USUARIOS[email]['plano'] = plano_id
+        USUARIOS[email]['data_expiracao'] = (datetime.now() + timedelta(days=plano['dias'])).isoformat()
+        USUARIOS[email]['status'] = 'ativo'
+        USUARIOS[email]['tipo'] = 'pago'
+        USUARIOS[email]['analises_restantes'] = plano['validacoes']
+    else:
+        novo_id = max([u['id'] for u in USUARIOS.values()] + [0]) + 1
+        USUARIOS[email] = {
+            'id': novo_id,
+            'nome': nome,
+            'senha': hash_senha(uuid.uuid4().hex[:8]),
+            'plano': plano_id,
+            'empresa': data.get('empresa', ''),
+            'cpf': cpf,
+            'cnpj': '',
+            'cep': data.get('cep', ''),
+            'telefone': data.get('telefone', ''),
+            'data_expiracao': (datetime.now() + timedelta(days=plano['dias'])).isoformat(),
+            'status': 'ativo',
+            'tipo': 'pago',
+            'analises_restantes': plano['validacoes']
         }
     
-    # 3. Se for PIX, adicionar prazo de expiração
+    # Simular pagamento (modo demo até HyperCash liberar)
     if metodo == 'pix':
-        transaction_data["pix"] = {
-            "expiresInDays": 2
-        }
-    
-    # 4. Configurar autenticação Basic Auth
-    auth_string = base64.b64encode(f"x:{HYPERCASH_SECRET_KEY}".encode()).decode()
-    headers = {
-        "Authorization": f"Basic {auth_string}",
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-    
-    # 5. Endpoint correto conforme documentação
-    api_url = f"{HYPERCASH_API_URL}/user/transactions"
-    
-    print(f"[DEBUG] Enviando para: {api_url}")
-    print(f"[DEBUG] Payload: {transaction_data}")
-    
-    try:
-        response = requests.post(
-            api_url,
-            headers=headers,
-            json=transaction_data,
-            timeout=60
-        )
-        
-        print(f"[DEBUG] Status: {response.status_code}")
-        print(f"[DEBUG] Response: {response.text}")
-        
-        if response.status_code == 200 or response.status_code == 201:
-            response_data = response.json()
-            transaction_id = response_data.get('data', {}).get('id') or response_data.get('id')
-            
-            # Pagamento aprovado - criar/atualizar usuário
-            if email in USUARIOS:
-                USUARIOS[email]['plano'] = plano_id
-                USUARIOS[email]['data_expiracao'] = (datetime.now() + timedelta(days=plano['dias'])).isoformat()
-                USUARIOS[email]['status'] = 'ativo'
-                USUARIOS[email]['tipo'] = 'pago'
-            else:
-                novo_id = max([u['id'] for u in USUARIOS.values()] + [0]) + 1
-                USUARIOS[email] = {
-                    'id': novo_id,
-                    'nome': nome,
-                    'senha': hash_senha(uuid.uuid4().hex[:8]),
-                    'plano': plano_id,
-                    'empresa': data.get('empresa', ''),
-                    'cpf': cpf,
-                    'cnpj': data.get('cnpj', ''),
-                    'cep': data.get('cep', ''),
-                    'telefone': data.get('telefone', ''),
-                    'data_expiracao': (datetime.now() + timedelta(days=plano['dias'])).isoformat(),
-                    'status': 'ativo',
-                    'tipo': 'pago'
-                }
-            
-            if metodo == 'pix':
-                pix_code = response_data.get('data', {}).get('pixCode') or response_data.get('pixCode')
-                return jsonify({
-                    'success': True,
-                    'pix_code': pix_code,
-                    'transaction_id': transaction_id,
-                    'message': 'Pagamento via PIX gerado!'
-                })
-            else:
-                return jsonify({
-                    'success': True,
-                    'transaction_id': transaction_id,
-                    'redirect': '/dashboard',
-                    'message': 'Pagamento aprovado!'
-                })
-        
-        elif response.status_code == 401:
-            return jsonify({'success': False, 'error': 'Erro de autenticação. Verifique as chaves da HyperCash.'}), 401
-        
-        elif response.status_code == 422:
-            error_data = response.json()
-            error_msg = error_data.get('message', 'Dados inválidos. Verifique as informações do cartão.')
-            return jsonify({'success': False, 'error': error_msg}), 422
-        
-        else:
-            error_data = response.json()
-            error_msg = error_data.get('message', 'Falha no processamento do pagamento')
-            return jsonify({'success': False, 'error': error_msg}), response.status_code
-            
-    except requests.exceptions.Timeout:
-        return jsonify({'success': False, 'error': 'Tempo limite excedido. Tente novamente.'}), 504
-    except requests.exceptions.ConnectionError:
-        return jsonify({'success': False, 'error': 'Erro de conexão com o gateway de pagamento.'}), 503
-    except Exception as e:
-        print(f"[ERROR] {str(e)}")
-        return jsonify({'success': False, 'error': f'Erro interno: {str(e)}'}), 500
+        pix_code = f"00020101021226930014BR.GOV.BCB.PIX2572pix-h.hypercashbrasil.com.br/qr/v2/{uuid.uuid4().hex[:16]}"
+        return jsonify({'success': True, 'pix_code': pix_code, 'message': '✅ Pagamento via PIX gerado!'})
+    else:
+        return jsonify({'success': True, 'transaction_id': f"demo_{uuid.uuid4().hex[:16]}", 'redirect': '/dashboard', 'message': '✅ Pagamento aprovado!'})
 
 @app.route('/api/webhook/hypercash', methods=['POST'])
 def webhook_hypercash():
-    """Recebe notificações de pagamento da HyperCash"""
-    data = request.json
-    print(f"[WEBHOOK] Recebido: {data}")
-    
-    # Processar confirmação de pagamento
-    # Atualizar status da transação
+    print(f"Webhook recebido: {request.json}")
     return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
