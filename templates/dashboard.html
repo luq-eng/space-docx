@@ -6,43 +6,40 @@
     <title>Dashboard | Space-Docx</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
         .app { display: flex; min-height: 100vh; }
-        .sidebar { width: 280px; background: #111; border-right: 1px solid #1f1f1f; padding: 32px 24px; position: fixed; height: 100vh; overflow-y: auto; }
-        .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid #1f1f1f; }
+        .sidebar { width: 280px; background: #111; border-right: 1px solid #2a2a2a; padding: 32px 24px; position: fixed; height: 100vh; overflow-y: auto; }
+        .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid #2a2a2a; }
         .logo-icon { font-size: 32px; }
-        .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-item { display: block; padding: 12px 16px; border-radius: 12px; color: #a1a1aa; text-decoration: none; margin-bottom: 8px; font-size: 14px; transition: all 0.2s; cursor: pointer; }
-        .nav-item:hover, .nav-item.active { background: #1a1a1a; color: #fff; }
+        .logo-text { font-size: 20px; font-weight: 700; color: #dc2626; }
+        .nav-item { display: block; padding: 12px 16px; border-radius: 12px; color: #a0a0a0; text-decoration: none; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .nav-item:hover, .nav-item.active { background: #1a1a1a; color: #dc2626; }
         .main { flex: 1; margin-left: 280px; padding: 32px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #1f1f1f; flex-wrap: wrap; gap: 16px; }
-        .header h1 { font-size: 24px; font-weight: 600; }
-        .header p { color: #a1a1aa; font-size: 13px; margin-top: 4px; }
-        .plan-badge { padding: 6px 12px; background: #1a1a1a; border-radius: 20px; font-size: 12px; color: #3b82f6; }
-        .logout-btn { padding: 8px 20px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; color: #a1a1aa; text-decoration: none; font-size: 13px; transition: all 0.2s; }
-        .logout-btn:hover { background: #2a2a2a; color: #fff; }
-        .upload-card { background: #111; border: 1px solid #1f1f1f; border-radius: 20px; padding: 32px; margin-bottom: 32px; }
-        .upload-card h3 { font-size: 18px; margin-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #2a2a2a; flex-wrap: wrap; gap: 16px; }
+        .plan-badge { padding: 6px 16px; background: #1a1a1a; border-radius: 30px; font-size: 12px; color: #dc2626; font-weight: 600; }
+        .logout-btn { padding: 8px 20px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 30px; color: #a0a0a0; text-decoration: none; transition: all 0.2s; }
+        .logout-btn:hover { background: #dc2626; color: white; border-color: #dc2626; }
+        .upload-card { background: #111; border: 1px solid #2a2a2a; border-radius: 20px; padding: 32px; }
         .upload-area { border: 2px dashed #2a2a2a; border-radius: 16px; padding: 48px; text-align: center; cursor: pointer; transition: all 0.3s; }
-        .upload-area:hover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+        .upload-area:hover { border-color: #dc2626; background: rgba(220,38,38,0.05); }
         .upload-icon { font-size: 48px; margin-bottom: 16px; }
-        .file-info { margin-top: 16px; padding: 12px; background: #1a1a1a; border-radius: 12px; font-size: 13px; color: #22c55e; }
-        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 20px; font-size: 14px; transition: transform 0.2s; }
-        .btn-primary:hover { transform: translateY(-2px); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .result-card { background: #111; border: 1px solid #1f1f1f; border-radius: 20px; padding: 32px; margin-top: 32px; text-align: center; }
-        .score-circle { width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; }
-        .score-value { font-size: 48px; font-weight: 700; }
-        .status { text-align: center; font-size: 24px; font-weight: 600; margin: 20px 0; }
-        .historico-table { width: 100%; border-collapse: collapse; }
-        .historico-table th, .historico-table td { padding: 14px; text-align: left; border-bottom: 1px solid #1f1f1f; }
-        .historico-table th { color: #a1a1aa; font-weight: 500; font-size: 12px; }
-        .loading-animation { text-align: center; padding: 60px; }
-        .spinner { width: 60px; height: 60px; border: 3px solid #1a1a1a; border-top-color: #3b82f6; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite; }
+        .file-info { margin-top: 16px; padding: 12px; background: #1a1a1a; border-radius: 12px; color: #22c55e; display: none; }
+        .btn-primary { width: 100%; padding: 14px; background: #dc2626; border: none; border-radius: 40px; color: white; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.2s; }
+        .btn-primary:hover { background: #b91c1c; transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result-card { background: #111; border: 1px solid #2a2a2a; border-radius: 20px; padding: 32px; margin-top: 32px; text-align: center; }
+        .score-circle { width: 140px; height: 140px; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .score-value { font-size: 48px; font-weight: 800; }
+        .status { font-size: 24px; font-weight: 700; margin: 20px 0; }
+        .historico-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .historico-table th, .historico-table td { padding: 14px; text-align: left; border-bottom: 1px solid #2a2a2a; }
+        .historico-table th { color: #dc2626; font-weight: 600; }
+        .spinner { width: 50px; height: 50px; border: 3px solid #2a2a2a; border-top-color: #dc2626; border-radius: 50%; margin: 20px auto; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .analises-restantes { font-size: 12px; color: #a1a1aa; margin-top: 8px; }
-        .warning-badge { background: rgba(239,68,68,0.2); color: #ef4444; padding: 8px 16px; border-radius: 12px; font-size: 13px; text-align: center; margin-bottom: 20px; }
-        @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } .header { flex-direction: column; text-align: center; } .historico-table { font-size: 12px; } .historico-table th, .historico-table td { padding: 8px; } }
+        .warning-badge { background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3); padding: 16px; border-radius: 16px; margin-bottom: 20px; text-align: center; }
+        .warning-badge a { color: #dc2626; text-decoration: none; font-weight: 600; }
+        .analises-restantes { font-size: 13px; color: #888; margin-top: 8px; text-align: center; }
+        @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } }
     </style>
 </head>
 <body>
@@ -52,26 +49,30 @@
             <a class="nav-item active" onclick="mostrarSecao('analisar')">🔍 Analisar Documento</a>
             <a class="nav-item" onclick="mostrarSecao('historico')">📋 Histórico</a>
             <a href="/planos" class="nav-item">💰 Planos</a>
-            <a href="/logout" class="nav-item" style="margin-top: 40px; color: #ef4444;">🚪 Sair</a>
+            <a href="/logout" class="nav-item" style="margin-top: 40px;">🚪 Sair</a>
         </aside>
         <main class="main">
             <div class="header">
                 <div><h1>Painel de Controle</h1><p id="userInfo">Carregando...</p></div>
                 <div><span class="plan-badge" id="planoInfo">-</span></div>
-                <div><span id="analisesInfo" class="analises-restantes"></span></div>
                 <a href="/logout" class="logout-btn">Sair</a>
+            </div>
+
+            <div id="alertaBloqueio" style="display: none;" class="warning-badge">
+                ⚠️ <span id="msgBloqueio"></span> <a href="/planos">👉 Adquirir plano agora</a>
             </div>
 
             <div id="secaoAnalisar">
                 <div class="upload-card" id="uploadCard">
                     <h3>Validar Documento</h3>
+                    <div id="analisesRestantes" class="analises-restantes"></div>
                     <div class="upload-area" id="uploadArea">
                         <div class="upload-icon">📄</div>
                         <div>Clique ou arraste seu PDF aqui</div>
-                        <div style="font-size: 12px; margin-top: 8px; color: #a1a1aa;">Máx. 10MB</div>
+                        <div style="font-size: 12px; margin-top: 8px;">Máx. 10MB</div>
                         <input type="file" id="pdfFile" accept=".pdf" style="display:none">
                     </div>
-                    <div id="fileInfo" class="file-info" style="display:none"></div>
+                    <div id="fileInfo" class="file-info"></div>
                     <button class="btn-primary" id="btnAnalisar" disabled>Analisar Documento</button>
                 </div>
                 <div id="resultado" style="display:none"></div>
@@ -85,36 +86,28 @@
 
     <script>
         let arquivoSelecionado = null;
-        let animacaoInterval = null;
         
-        const mensagensAnalise = [
-            "🔍 Processando documento...",
-            "📊 Validando informações...",
-            "🔐 Verificando autenticidade...",
-            "⚙️ Analisando estrutura...",
-            "✅ Finalizando análise..."
-        ];
-
         async function carregarUsuario() {
             try {
                 const r = await fetch('/api/usuario');
                 const d = await r.json();
                 document.getElementById('userInfo').innerHTML = `${d.nome} | ${d.email}`;
                 document.getElementById('planoInfo').innerHTML = d.plano?.toUpperCase() || 'TRIAL';
-                document.getElementById('analisesInfo').innerHTML = `📊 Análises restantes: ${d.analises_restantes || 5}`;
+                document.getElementById('analisesRestantes').innerHTML = `📊 Análises restantes: ${d.analises_restantes || 'Ilimitado'}`;
                 
+                // Verificar bloqueio
                 if (d.status === 'bloqueado') {
-                    document.getElementById('uploadCard').innerHTML = `
-                        <div class="warning-badge">
-                            ⚠️ Seu teste gratuito expirou. <a href="/planos" style="color:#3b82f6;">Adquira um plano</a> para continuar.
-                        </div>
-                        <div class="upload-area" style="opacity:0.5; cursor:not-allowed;">
-                            <div class="upload-icon">🔒</div>
-                            <div>Conta bloqueada</div>
-                            <div style="font-size:12px;">Renove seu plano para validar documentos</div>
-                        </div>
-                    `;
+                    document.getElementById('alertaBloqueio').style.display = 'block';
+                    document.getElementById('msgBloqueio').innerHTML = 'Sua conta está bloqueada. Suas análises expiraram.';
                     document.getElementById('btnAnalisar').disabled = true;
+                    document.getElementById('uploadArea').style.opacity = '0.5';
+                    document.getElementById('uploadArea').style.cursor = 'not-allowed';
+                } else if (d.analises_restantes === 0 || (d.analises_restantes === '0')) {
+                    document.getElementById('alertaBloqueio').style.display = 'block';
+                    document.getElementById('msgBloqueio').innerHTML = 'Seu teste gratuito acabou! Adquira um plano para continuar.';
+                    document.getElementById('btnAnalisar').disabled = true;
+                } else {
+                    document.getElementById('alertaBloqueio').style.display = 'none';
                 }
             } catch(e) { console.error(e); }
         }
@@ -124,7 +117,7 @@
                 const r = await fetch('/api/historico');
                 const d = await r.json();
                 if(d.length === 0) { 
-                    document.getElementById('historicoList').innerHTML = '<div style="text-align:center;padding:40px;color:#a1a1aa;">Nenhuma análise realizada ainda</div>'; 
+                    document.getElementById('historicoList').innerHTML = '<div style="text-align:center;padding:40px;">Nenhuma análise realizada ainda</div>'; 
                     return; 
                 }
                 let html = '<table class="historico-table"><thead><tr><th>DATA</th><th>ARQUIVO</th><th>STATUS</th><th>SCORE</th></tr></thead><tbody>';
@@ -149,7 +142,7 @@
         const pdfFile = document.getElementById('pdfFile');
         
         uploadArea.onclick = () => pdfFile.click();
-        uploadArea.ondragover = (e) => { e.preventDefault(); uploadArea.style.borderColor = '#3b82f6'; };
+        uploadArea.ondragover = (e) => { e.preventDefault(); uploadArea.style.borderColor = '#dc2626'; };
         uploadArea.ondragleave = () => uploadArea.style.borderColor = '#2a2a2a';
         uploadArea.ondrop = (e) => {
             e.preventDefault();
@@ -162,8 +155,9 @@
         function processarArquivo(file) {
             if(file.size > 10 * 1024 * 1024) { alert('Arquivo muito grande (máx 10MB)'); return; }
             arquivoSelecionado = file;
-            document.getElementById('fileInfo').style.display = 'block';
-            document.getElementById('fileInfo').innerHTML = `✅ ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+            const fileInfo = document.getElementById('fileInfo');
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `✅ ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
             document.getElementById('btnAnalisar').disabled = false;
         }
 
@@ -176,9 +170,7 @@
                         <span class="score-value" style="color:${cor}">${data.score}</span>
                     </div>
                     <div class="status" style="color:${cor}">${data.status_icon || ''} ${data.status}</div>
-                    <div style="margin-top:16px;font-size:12px;color:#a1a1aa;">
-                        📅 ${data.data} | Análise concluída com sucesso
-                    </div>
+                    <div style="margin-top:16px;font-size:12px;color:#a0a0a0;">📅 ${data.data} | Análise concluída</div>
                 </div>
             `;
             document.getElementById('resultado').style.display = 'block';
@@ -189,31 +181,18 @@
 
         document.getElementById('btnAnalisar').onclick = async () => {
             if(!arquivoSelecionado) return;
-            
             const btn = document.getElementById('btnAnalisar');
             const uploadCard = document.getElementById('uploadCard');
-            
             btn.disabled = true;
             document.getElementById('resultado').style.display = 'none';
             
             uploadCard.innerHTML = `
-                <div class="loading-animation">
+                <div style="text-align:center;padding:60px;">
                     <div class="spinner"></div>
-                    <div id="mensagemAnimacao" style="color: #3b82f6; font-size: 16px; margin-bottom: 10px;">🔍 Processando documento...</div>
-                    <div id="tempoAnimacao" style="color: #a1a1aa; font-size: 12px;">Tempo estimado: 20-35 segundos</div>
+                    <div id="mensagemAnimacao" style="color:#dc2626; margin-top:20px;">🔍 Analisando documento...</div>
+                    <div id="tempoAnimacao" style="color:#a0a0a0; margin-top:10px;">Tempo estimado: 20-35 segundos</div>
                 </div>
             `;
-            
-            let msgIndex = 0;
-            let tempoDecorrido = 0;
-            animacaoInterval = setInterval(() => {
-                tempoDecorrido++;
-                const msgDiv = document.getElementById('mensagemAnimacao');
-                const tempoDiv = document.getElementById('tempoAnimacao');
-                if(msgDiv) msgDiv.innerHTML = mensagensAnalise[msgIndex % mensagensAnalise.length];
-                if(tempoDiv) tempoDiv.innerHTML = `⏱️ Processando... ~${Math.max(0, 35 - tempoDecorrido)}s restantes`;
-                msgIndex++;
-            }, 3000);
             
             const formData = new FormData();
             formData.append('pdf', arquivoSelecionado);
@@ -221,7 +200,6 @@
             try {
                 const response = await fetch('/api/analisar', { method: 'POST', body: formData });
                 const data = await response.json();
-                clearInterval(animacaoInterval);
                 
                 if(data.bloqueado) {
                     alert(data.error);
@@ -235,7 +213,6 @@
                     alert('Erro: ' + (data.error || 'Tente novamente'));
                 }
             } catch(error) {
-                clearInterval(animacaoInterval);
                 alert('Erro: ' + error.message);
             } finally {
                 location.reload();
