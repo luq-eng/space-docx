@@ -13,7 +13,7 @@
         .logo { text-align: center; margin-bottom: 32px; }
         .logo-icon { font-size: 48px; }
         .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        h1 { font-size: 24px; margin-bottom: 8px; }
+        h1 { font-size: 24px; margin-bottom: 8px; text-align: center; }
         .subtitle { color: #a1a1aa; font-size: 14px; margin-bottom: 24px; text-align: center; }
         .plan-summary { background: #1a1a1a; border-radius: 16px; padding: 20px; margin-bottom: 24px; text-align: center; }
         .plan-price { font-size: 28px; font-weight: 700; color: #3b82f6; }
@@ -80,12 +80,27 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const planoId = window.location.pathname.split('/').pop();
-        
-        const planos = { 'basico': { nome: 'Básico', preco: 49 }, 'profissional': { nome: 'Profissional', preco: 149 }, 'enterprise': { nome: 'Enterprise', preco: 349 } };
-        const plano = planos[planoId] || planos['profissional'];
+        let cardToken = null;
+        let sdkInicializado = false;
         let metodoSelecionado = 'credit_card';
         
+        const PUBLIC_KEY = "{{ public_key }}";
+        const planos = { 'basico': { nome: 'Básico', preco: 49 }, 'profissional': { nome: 'Profissional', preco: 149 }, 'enterprise': { nome: 'Enterprise', preco: 349 } };
+        const plano = planos[planoId] || planos['profissional'];
+        
         document.getElementById('planInfo').innerHTML = `<div style="margin-bottom:8px;">Plano ${plano.nome}</div><div class="plan-price">R$ ${plano.preco}<span>/mês</span></div>`;
+        
+        // Inicializar SDK HyperCash
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await FastSoft.setPublicKey(PUBLIC_KEY);
+                sdkInicializado = true;
+                console.log('SDK HyperCash inicializado');
+            } catch (error) {
+                console.error('Erro ao inicializar SDK:', error);
+                mostrarErro('Erro ao carregar sistema de pagamento. Recarregue a página.');
+            }
+        });
         
         function selecionarMetodo(metodo) {
             metodoSelecionado = metodo;
@@ -94,6 +109,7 @@
             document.getElementById('cartaoFields').style.display = metodo === 'credit_card' ? 'block' : 'none';
         }
         
+        // Formatações
         document.getElementById('cpf').addEventListener('input', function(e) {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 11) v = v.slice(0,11);
@@ -103,19 +119,53 @@
             e.target.value = v;
         });
         
-        document.getElementById('cardNumber')?.addEventListener('input', function(e) {
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 16) v = v.slice(0,16);
             v = v.replace(/(\d{4})(?=\d)/g, '$1 ');
             e.target.value = v;
         });
         
-        document.getElementById('cardExpiry')?.addEventListener('input', function(e) {
+        document.getElementById('cardExpiry').addEventListener('input', function(e) {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 4) v = v.slice(0,4);
             if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
             e.target.value = v;
         });
+        
+        function mostrarErro(msg) {
+            const div = document.getElementById('errorMsg');
+            div.textContent = msg;
+            div.style.display = 'block';
+            setTimeout(() => div.style.display = 'none', 5000);
+        }
+        
+        async function tokenizarCartao() {
+            if (!sdkInicializado) {
+                throw new Error('Sistema de pagamento não inicializado. Aguarde e tente novamente.');
+            }
+            
+            const cardData = {
+                number: document.getElementById('cardNumber').value.replace(/\s/g, ''),
+                holderName: document.getElementById('cardHolder').value.toUpperCase(),
+                expMonth: document.getElementById('cardExpiry').value.split('/')[0],
+                expYear: '20' + document.getElementById('cardExpiry').value.split('/')[1],
+                cvv: document.getElementById('cardCvv').value
+            };
+            
+            if (!cardData.number || cardData.number.length < 16) throw new Error('Número do cartão inválido');
+            if (!cardData.holderName) throw new Error('Nome do portador é obrigatório');
+            if (!cardData.expMonth || cardData.expMonth.length < 2) throw new Error('Data de validade inválida');
+            if (!cardData.cvv || cardData.cvv.length < 3) throw new Error('CVV inválido');
+            
+            try {
+                const token = await FastSoft.encrypt(cardData);
+                return token;
+            } catch (error) {
+                console.error('Erro tokenização:', error);
+                throw new Error(error.message || 'Erro ao processar cartão');
+            }
+        }
         
         document.getElementById('paymentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -129,24 +179,34 @@
             errorDiv.style.display = 'none';
             successDiv.style.display = 'none';
             
-            const payload = {
-                plano: planoId,
-                metodo: metodoSelecionado,
-                nome: document.getElementById('nome').value,
-                email: document.getElementById('email').value,
-                cpf: document.getElementById('cpf').value.replace(/\D/g, '')
-            };
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
             
-            if (metodoSelecionado === 'credit_card') {
-                payload.card_number = document.getElementById('cardNumber').value.replace(/\s/g, '');
-                payload.card_holder = document.getElementById('cardHolder').value.toUpperCase();
-                const expiry = document.getElementById('cardExpiry').value.split('/');
-                payload.card_exp_month = expiry[0];
-                payload.card_exp_year = '20' + expiry[1];
-                payload.card_cvv = document.getElementById('cardCvv').value;
+            if (!nome || !email || !cpf || cpf.length !== 11) {
+                mostrarErro('Preencha todos os dados corretamente');
+                btn.disabled = false;
+                btn.textContent = 'Pagar agora';
+                return;
             }
             
+            let card_token = null;
+            
             try {
+                if (metodoSelecionado === 'credit_card') {
+                    card_token = await tokenizarCartao();
+                    if (!card_token) throw new Error('Erro na tokenização do cartão');
+                }
+                
+                const payload = {
+                    plano: planoId,
+                    metodo: metodoSelecionado,
+                    nome: nome,
+                    email: email,
+                    cpf: cpf,
+                    card_token: card_token
+                };
+                
                 const response = await fetch('/api/criar-pagamento', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -159,7 +219,7 @@
                     if (metodoSelecionado === 'pix') {
                         successDiv.style.display = 'block';
                         successDiv.innerHTML = `
-                            <strong>✅ Pagamento via PIX gerado!</strong><br>
+                            <strong>✅ Pagamento via PIX gerado!</strong>
                             <div class="pix-area">
                                 <div class="pix-code">${data.pix_code || 'Código PIX gerado'}</div>
                                 <button onclick="copiarPix('${data.pix_code}')" class="btn" style="margin-top:8px; background:#1a1a1a;">📋 Copiar código PIX</button>
@@ -173,14 +233,12 @@
                         window.location.href = '/dashboard';
                     }
                 } else {
-                    errorDiv.style.display = 'block';
-                    errorDiv.textContent = data.error || 'Erro no pagamento';
+                    mostrarErro(data.error || 'Erro no pagamento');
                     btn.disabled = false;
                     btn.textContent = 'Pagar agora';
                 }
             } catch(error) {
-                errorDiv.style.display = 'block';
-                errorDiv.textContent = 'Erro de conexão. Tente novamente.';
+                mostrarErro(error.message);
                 btn.disabled = false;
                 btn.textContent = 'Pagar agora';
             }
