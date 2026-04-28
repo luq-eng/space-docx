@@ -3,70 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro | Space-Docx</title>
+    <title>Política de Privacidade | Space-Docx</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .register-container { width: 100%; max-width: 500px; padding: 24px; }
-        .register-card { background: #111; border: 1px solid #1f1f1f; border-radius: 24px; padding: 40px; }
-        .logo { text-align: center; margin-bottom: 32px; }
-        .logo-icon { font-size: 48px; }
-        .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        h1 { font-size: 24px; margin-bottom: 8px; }
-        .subtitle { color: #a1a1aa; font-size: 14px; margin-bottom: 32px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; color: #a1a1aa; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; color: white; }
-        input:focus { outline: none; border-color: #3b82f6; }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 8px; }
-        .login-link { text-align: center; margin-top: 24px; font-size: 13px; color: #a1a1aa; }
-        .login-link a { color: #3b82f6; text-decoration: none; }
-        .flash-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); padding: 12px; border-radius: 10px; margin-bottom: 20px; color: #ef4444; }
-        .flash-success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); padding: 12px; border-radius: 10px; margin-bottom: 20px; color: #22c55e; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 60px 24px; }
+        h1 { text-align: center; font-size: 36px; margin-bottom: 16px; color: #dc2626; }
+        .date { text-align: center; color: #a0a0a0; font-size: 13px; margin-bottom: 40px; }
+        .section { margin-bottom: 32px; }
+        .section h2 { font-size: 20px; color: #dc2626; margin-bottom: 16px; }
+        .section p, .section ul { color: #a0a0a0; font-size: 14px; }
+        .section ul { padding-left: 20px; margin-top: 8px; }
+        .section li { margin-bottom: 8px; }
+        .footer { text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid #2a2a2a; color: #666; font-size: 12px; }
+        .footer a { color: #dc2626; text-decoration: none; }
+        @media (max-width: 768px) { .container { padding: 40px 20px; } h1 { font-size: 28px; } }
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <div class="register-card">
-            <div class="logo"><div class="logo-icon">🛸</div><div class="logo-text">SPACE-DOCX</div></div>
-            <h1>Criar conta</h1>
-            <p class="subtitle">Teste grátis por 7 dias</p>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            <form method="POST">
-                <div class="form-group"><label>Nome completo</label><input type="text" name="nome" required></div>
-                <div class="form-group"><label>E-mail</label><input type="email" name="email" required></div>
-                <div class="form-group"><label>Senha</label><input type="password" name="senha" required></div>
-                <div class="form-group"><label>Empresa</label><input type="text" name="empresa"></div>
-                <div class="row"><div><label>CNPJ</label><input type="text" name="cnpj" id="cnpj"></div><div><label>Telefone</label><input type="text" name="telefone" id="telefone"></div></div>
-                <button type="submit" class="btn">Criar conta</button>
-            </form>
-            <div class="login-link">Já tem conta? <a href="/login">Faça login</a></div>
-        </div>
+    <div class="container">
+        <h1>Política de Privacidade</h1>
+        <div class="date">Última atualização: Abril de 2026</div>
+
+        <div class="section"><h2>1. Compromisso com a Privacidade</h2><p>A Space-Docx está comprometida em proteger seus dados pessoais e cumprir a Lei Geral de Proteção de Dados (LGPD).</p></div>
+        <div class="section"><h2>2. Dados Coletados</h2><ul><li>Dados cadastrais: Nome, CPF/CNPJ, e-mail, telefone, CEP</li><li>Dados de uso: Documentos analisados, histórico de validações</li><li>Dados técnicos: IP, navegador, data/hora de acesso</li></ul></div>
+        <div class="section"><h2>3. Como Usamos Seus Dados</h2><p>Utilizamos suas informações para fornecer serviços de validação, processar pagamentos, garantir segurança e cumprir obrigações legais.</p></div>
+        <div class="section"><h2>4. Compartilhamento de Dados</h2><p>Não vendemos ou alugamos seus dados. Compartilhamos apenas com processadores de pagamento (HyperCash) ou por exigência legal.</p></div>
+        <div class="section"><h2>5. Segurança</h2><p>Implementamos criptografia TLS 1.3, armazenamento seguro e controle de acesso rigoroso.</p></div>
+        <div class="section"><h2>6. Seus Direitos</h2><p>Você pode acessar, corrigir ou solicitar a exclusão de seus dados a qualquer momento através do e-mail: privacy@space-docx.com</p></div>
+        <div class="section"><h2>7. Contato</h2><p>Dúvidas sobre privacidade: privacy@space-docx.com</p></div>
+
+        <div class="footer"><p>© 2026 Space-Docx. | <a href="/">Início</a> | <a href="/planos">Planos</a> | <a href="/login">Login</a></p></div>
     </div>
-    <script>
-        document.getElementById('cnpj')?.addEventListener('input', function(e) {
-            let v = e.target.value.replace(/\D/g, '');
-            if (v.length > 14) v = v.slice(0,14);
-            if (v.length > 12) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-            else if (v.length > 8) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{1,4})/, '$1.$2.$3/$4');
-            else if (v.length > 5) v = v.replace(/(\d{2})(\d{3})(\d{1,3})/, '$1.$2.$3');
-            else if (v.length > 2) v = v.replace(/(\d{2})(\d{1,3})/, '$1.$2');
-            e.target.value = v;
-        });
-        document.getElementById('telefone')?.addEventListener('input', function(e) {
-            let v = e.target.value.replace(/\D/g, '');
-            if (v.length > 11) v = v.slice(0,11);
-            if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-            else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-            e.target.value = v;
-        });
-    </script>
 </body>
 </html>
