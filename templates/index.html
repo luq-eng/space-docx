@@ -9,16 +9,16 @@
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.5; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         
-        /* Header - Responsivo */
+        /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #1f1f1f; flex-wrap: wrap; gap: 16px; }
         .logo { display: flex; align-items: center; gap: 10px; }
-        .logo-icon { font-size: 32px; }
-        .logo-text { font-size: 20px; font-weight: 800; color: #dc2626; }
+        .logo-svg { width: 40px; height: 40px; }
+        .logo-text { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #dc2626, #991b1b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .logo-badge { background: #dc2626; padding: 2px 10px; border-radius: 20px; font-size: 10px; color: white; font-weight: 600; }
         .nav { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
         .nav a { color: #a0a0a0; text-decoration: none; font-size: 14px; transition: color 0.2s; }
         .nav a:hover { color: #dc2626; }
-        .btn-login { background: #dc2626; padding: 8px 20px; border-radius: 30px; color: white !important; font-weight: 600; }
+        .btn-login { background: #dc2626; padding: 8px 20px; border-radius: 30px; color: white !important; }
         
         /* Hero */
         .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 0 40px; gap: 40px; flex-wrap: wrap; }
@@ -27,23 +27,40 @@
         .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
         .hero h1 span { color: #dc2626; }
         .hero p { font-size: 16px; color: #a0a0a0; margin-bottom: 30px; line-height: 1.6; }
-        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
-        .btn-primary { background: #dc2626; color: white; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 700; display: inline-block; transition: transform 0.2s; }
-        .btn-secondary { background: #1a1a1a; border: 1px solid #dc2626; color: #dc2626; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 700; transition: transform 0.2s; }
-        .btn-primary:hover, .btn-secondary:hover { transform: translateY(-2px); }
         .hero-image { flex: 1; text-align: center; min-width: 200px; }
-        .shield-icon { font-size: 140px; }
+        .hero-svg { width: 200px; height: 200px; }
         
-        /* Stats com valores economizados */
-        .stats-economia { background: linear-gradient(135deg, #111, #0a0a0a); border-radius: 24px; padding: 40px; margin: 40px 0; text-align: center; border: 1px solid #1f1f1f; }
+        /* Quiz Section */
+        .quiz-section { background: linear-gradient(135deg, #111, #0a0a0a); border-radius: 32px; padding: 40px; margin: 40px 0; border: 1px solid #1f1f1f; }
+        .quiz-title { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 8px; }
+        .quiz-subtitle { text-align: center; color: #a0a0a0; margin-bottom: 32px; font-size: 14px; }
+        .quiz-form { max-width: 500px; margin: 0 auto; }
+        .quiz-group { margin-bottom: 24px; }
+        .quiz-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #dc2626; }
+        .quiz-group input { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; color: white; font-size: 14px; }
+        .quiz-group input:focus { outline: none; border-color: #dc2626; }
+        .slider-container { margin-top: 16px; }
+        .slider { width: 100%; height: 6px; -webkit-appearance: none; background: #2a2a2a; border-radius: 3px; outline: none; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #dc2626; border-radius: 50%; cursor: pointer; }
+        .slider-value { text-align: center; margin-top: 12px; font-size: 24px; font-weight: 700; color: #dc2626; }
+        .slider-label { text-align: center; font-size: 12px; color: #666; margin-top: 4px; }
+        
+        /* Resultado Quiz */
+        .quiz-resultado { background: #1a1a1a; border-radius: 20px; padding: 24px; margin-top: 24px; text-align: center; display: none; animation: fadeInUp 0.5s ease-out; }
+        .quiz-resultado h3 { font-size: 18px; margin-bottom: 16px; color: #dc2626; }
+        .perda-valor { font-size: 36px; font-weight: 800; color: #dc2626; margin: 16px 0; }
+        .btn-quiz { background: #dc2626; color: white; padding: 12px 32px; border-radius: 40px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 16px; transition: transform 0.2s; border: none; cursor: pointer; }
+        .btn-quiz:hover { transform: translateY(-2px); background: #b91c1c; }
+        
+        /* Stats Economia Animados */
+        .stats-economia { background: #111; border-radius: 24px; padding: 40px; margin: 40px 0; text-align: center; border: 1px solid #1f1f1f; }
         .stats-economia h3 { font-size: 20px; margin-bottom: 24px; color: #dc2626; }
         .economia-grid { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
         .economia-card { text-align: center; }
-        .economia-valor { font-size: 42px; font-weight: 800; color: #dc2626; }
+        .economia-valor { font-size: 42px; font-weight: 800; color: #dc2626; font-family: monospace; }
         .economia-label { font-size: 14px; color: #888; margin-top: 8px; }
-        .economia-desc { font-size: 12px; color: #555; margin-top: 4px; }
         
-        /* Ciclo de Proteção - Melhorado */
+        /* Ciclo de Proteção */
         .ciclo { background: #111; border-radius: 32px; padding: 48px 32px; margin: 48px 0; border: 1px solid #1f1f1f; }
         .section-title { text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 12px; }
         .section-subtitle { text-align: center; color: #a0a0a0; margin-bottom: 40px; font-size: 15px; }
@@ -74,41 +91,19 @@
         /* Footer */
         .footer { text-align: center; padding: 40px 0 30px; border-top: 1px solid #1f1f1f; margin-top: 40px; color: #666; font-size: 12px; }
         .footer a { color: #dc2626; text-decoration: none; }
-        .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
-        .footer-links a { color: #888; font-size: 12px; }
-        
-        /* Responsivo Mobile */
-        @media (max-width: 768px) {
-            .container { padding: 0 16px; }
-            .header { flex-direction: column; text-align: center; }
-            .nav { justify-content: center; }
-            .hero { padding: 40px 0 20px; text-align: center; }
-            .hero h1 { font-size: 28px; }
-            .hero-buttons { justify-content: center; }
-            .shield-icon { font-size: 100px; }
-            .economia-valor { font-size: 32px; }
-            .economia-grid { gap: 24px; }
-            .ciclo-container { flex-direction: column; }
-            .ciclo-arrow { transform: rotate(90deg); }
-            .ciclo-step { width: 100%; }
-            .features { grid-template-columns: 1fr; }
-            .cta h2 { font-size: 22px; }
-            .stats-economia { padding: 24px; }
-            .ciclo { padding: 32px 20px; }
-        }
-        
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 24px; }
-            .economia-valor { font-size: 28px; }
-            .btn-primary, .btn-secondary { padding: 10px 20px; font-size: 14px; }
-            .section-title { font-size: 24px; }
-        }
         
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animated { animation: fadeInUp 0.6s ease-out; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .ciclo-container { flex-direction: column; }
+            .ciclo-arrow { transform: rotate(90deg); }
+            .features { grid-template-columns: 1fr; }
+            .economia-grid { gap: 24px; }
+            .nav { justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -116,7 +111,17 @@
         <!-- Header -->
         <div class="header">
             <div class="logo">
-                <div class="logo-icon">🛡️</div>
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 L50 10Z" stroke="#dc2626" stroke-width="4" fill="none"/>
+                    <path d="M50 30 L65 40 L65 60 L50 70 L35 60 L35 40 L50 30Z" stroke="#dc2626" stroke-width="3" fill="none"/>
+                    <circle cx="50" cy="50" r="8" fill="#dc2626"/>
+                    <path d="M50 20 L50 30" stroke="#dc2626" stroke-width="3"/>
+                    <path d="M50 70 L50 80" stroke="#dc2626" stroke-width="3"/>
+                    <path d="M30 40 L20 35" stroke="#dc2626" stroke-width="3"/>
+                    <path d="M70 40 L80 35" stroke="#dc2626" stroke-width="3"/>
+                    <path d="M30 60 L20 65" stroke="#dc2626" stroke-width="3"/>
+                    <path d="M70 60 L80 65" stroke="#dc2626" stroke-width="3"/>
+                </svg>
                 <div class="logo-text">SPACE-DOCX</div>
                 <div class="logo-badge">Anti-Fraude</div>
             </div>
@@ -129,115 +134,106 @@
             </div>
         </div>
 
-        <!-- Hero Section -->
+        <!-- Hero -->
         <div class="hero">
-            <div class="hero-content animated">
+            <div class="hero-content">
                 <div class="hero-badge">🔒 Proteção Inteligente</div>
-                <h1>Reduza <span>até 98%</span> dos prejuízos com <span>documentos falsos</span></h1>
+                <h1>Reduza <span>até 100%</span> dos prejuízos com <span>documentos falsos</span></h1>
                 <p>Validação automática de faturas, comprovantes e documentos bancários. Detecte fraudes antes que causem danos ao seu negócio.</p>
-                <div class="hero-buttons">
-                    <a href="/planos" class="btn-primary">Começar Agora</a>
-                    <a href="/gerar-chave-teste" class="btn-secondary">Teste Grátis 7 Dias</a>
-                </div>
             </div>
             <div class="hero-image">
-                <div class="shield-icon">🛡️</div>
+                <svg class="hero-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 20 L180 60 L180 140 L100 180 L20 140 L20 60 L100 20Z" stroke="#dc2626" stroke-width="4" fill="none"/>
+                    <path d="M100 60 L130 80 L130 120 L100 140 L70 120 L70 80 L100 60Z" stroke="#dc2626" stroke-width="3" fill="none"/>
+                    <circle cx="100" cy="100" r="12" fill="#dc2626"/>
+                    <path d="M100 40 L100 60" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M100 140 L100 160" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M60 80 L40 70" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M140 80 L160 70" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M60 120 L40 130" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M140 120 L160 130" stroke="#dc2626" stroke-width="4"/>
+                </svg>
             </div>
         </div>
 
-        <!-- Stats com valores economizados -->
+        <!-- Quiz Section -->
+        <div class="quiz-section" id="quiz">
+            <h2 class="quiz-title">📊 Descubra quanto você pode economizar</h2>
+            <p class="quiz-subtitle">Responda as perguntas abaixo e veja o impacto da proteção Space-Docx</p>
+            
+            <div class="quiz-form">
+                <div class="quiz-group">
+                    <label>🏢 Nome da sua empresa</label>
+                    <input type="text" id="empresaNome" placeholder="Ex: Minha Empresa Ltda">
+                </div>
+                
+                <div class="quiz-group">
+                    <label>💰 Faturamento mensal</label>
+                    <div class="slider-container">
+                        <input type="range" id="faturamentoSlider" class="slider" min="5000" max="1000000" step="1000" value="50000">
+                        <div class="slider-value" id="faturamentoValor">R$ 50.000</div>
+                        <div class="slider-label">Mínimo R$ 5.000 | Máximo R$ 1.000.000</div>
+                    </div>
+                </div>
+                
+                <button class="btn-quiz" id="calcularProtecao" style="width: 100%;">🔒 Calcular proteção →</button>
+                
+                <div id="quizResultado" class="quiz-resultado">
+                    <h3>🛡️ RESULTADO DA PROTEÇÃO</h3>
+                    <div id="empresaResultado"></div>
+                    <div class="perda-valor" id="perdaResultado"></div>
+                    <p style="color:#888; font-size:13px;">Este é o valor que você pode perder anualmente com fraudes documentais.</p>
+                    <p style="color:#dc2626; font-weight:700; margin-top:16px;">Space-Docx reduz em até 100% este prejuízo!</p>
+                    <a href="/planos" class="btn-quiz" style="background:#dc2626; margin-top:20px;">👉 Proteja sua empresa agora</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Economia Animados -->
         <div class="stats-economia">
-            <h3>📊 O quanto sua empresa pode economizar</h3>
+            <h3>📊 Quanto sua empresa pode economizar com Space-Docx</h3>
             <div class="economia-grid">
                 <div class="economia-card">
-                    <div class="economia-valor">R$ 49.800</div>
-                    <div class="economia-label">Economia anual média</div>
-                    <div class="economia-desc">empresas de pequeno porte</div>
+                    <div class="economia-valor" id="economia1">0</div>
+                    <div class="economia-label">Empresas de pequeno porte</div>
                 </div>
                 <div class="economia-card">
-                    <div class="economia-valor">R$ 247.500</div>
-                    <div class="economia-label">Economia anual média</div>
-                    <div class="economia-desc">empresas de médio porte</div>
+                    <div class="economia-valor" id="economia2">0</div>
+                    <div class="economia-label">Empresas de médio porte</div>
                 </div>
                 <div class="economia-card">
-                    <div class="economia-valor">US$ 287.000</div>
-                    <div class="economia-label">Economia anual média</div>
-                    <div class="economia-desc">empresas internacionais</div>
+                    <div class="economia-valor" id="economia3">0</div>
+                    <div class="economia-label">Empresas de grande porte</div>
                 </div>
             </div>
-            <div style="margin-top: 24px; font-size: 12px; color: #555;">*Baseado em dados reais de clientes Space-Docx</div>
         </div>
 
-        <!-- Ciclo de Proteção Melhorado -->
+        <!-- Ciclo de Proteção -->
         <div class="ciclo" id="funcionamento">
             <h2 class="section-title">🛡️ Ciclo de Proteção Space-Docx</h2>
             <p class="section-subtitle">4 etapas para blindar sua empresa contra fraudes documentais</p>
             <div class="ciclo-container">
-                <div class="ciclo-step">
-                    <div class="step-number">1</div>
-                    <div class="step-icon">📤</div>
-                    <div class="step-title">Upload do Documento</div>
-                    <div class="step-desc">Cliente ou colaborador envia a fatura, comprovante ou documento bancário</div>
-                </div>
+                <div class="ciclo-step"><div class="step-number">1</div><div class="step-icon">📤</div><div class="step-title">Upload</div><div class="step-desc">Cliente envia o documento para validação</div></div>
                 <div class="ciclo-arrow">→</div>
-                <div class="ciclo-step">
-                    <div class="step-number">2</div>
-                    <div class="step-icon">🔍</div>
-                    <div class="step-title">Análise Automática</div>
-                    <div class="step-desc">Nossa IA verifica metadados, estrutura, assinaturas e ferramentas suspeitas</div>
-                </div>
+                <div class="ciclo-step"><div class="step-number">2</div><div class="step-icon">🔍</div><div class="step-title">Análise IA</div><div class="step-desc">Nossa IA verifica metadados e autenticidade</div></div>
                 <div class="ciclo-arrow">→</div>
-                <div class="ciclo-step">
-                    <div class="step-number">3</div>
-                    <div class="step-icon">📊</div>
-                    <div class="step-title">Score de Autenticidade</div>
-                    <div class="step-desc">Resultado de 0 a 100 pontos com classificação clara</div>
-                </div>
+                <div class="ciclo-step"><div class="step-number">3</div><div class="step-icon">📊</div><div class="step-title">Score</div><div class="step-desc">Resultado de 0 a 100 pontos</div></div>
                 <div class="ciclo-arrow">→</div>
-                <div class="ciclo-step">
-                    <div class="step-number">4</div>
-                    <div class="step-icon">✅</div>
-                    <div class="step-title">Decisão em Segundos</div>
-                    <div class="step-desc">Aprove ou rejeite o documento com total segurança</div>
-                </div>
+                <div class="ciclo-step"><div class="step-number">4</div><div class="step-icon">✅</div><div class="step-title">Decisão</div><div class="step-desc">Aprove ou rejeite com segurança</div></div>
             </div>
         </div>
 
         <!-- Features -->
         <div class="features" id="recursos">
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Detecção de Fraudes</h3>
-                <p>Identifica documentos criados no Canva, Photoshop, Illustrator, Corel e outras ferramentas suspeitas.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Resultado Rápido</h3>
-                <p>Análise completa em 30-45 segundos. Decisões ágeis para seu negócio não parar.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📈</div>
-                <h3>Redução de Prejuízos</h3>
-                <p>Empresas que usam o Space-Docx reduzem em até 98% as perdas com documentos fraudulentos.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Segurança Total</h3>
-                <p>Criptografia de ponta a ponta e conformidade com a LGPD.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📋</div>
-                <h3>Histórico Completo</h3>
-                <p>Todas as validações são armazenadas para consulta e auditoria.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3>Garantia de Proteção</h3>
-                <p>Se sofrer prejuízo com documento aprovado, devolvemos 100% do valor.</p>
-            </div>
+            <div class="feature-card"><div class="feature-icon">🎯</div><h3>Detecção de Fraudes</h3><p>Identifica Canva, Photoshop, Corel e outras ferramentas suspeitas.</p></div>
+            <div class="feature-card"><div class="feature-icon">⚡</div><h3>Resultado Rápido</h3><p>Análise em 30-45 segundos. Decisões ágeis.</p></div>
+            <div class="feature-card"><div class="feature-icon">📈</div><h3>Redução de Prejuízos</h3><p>Reduza em até 100% as perdas com documentos falsos.</p></div>
+            <div class="feature-card"><div class="feature-icon">🔒</div><h3>Segurança Total</h3><p>Criptografia e conformidade com LGPD.</p></div>
+            <div class="feature-card"><div class="feature-icon">📋</div><h3>Histórico Completo</h3><p>Todas as validações armazenadas.</p></div>
+            <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Garantia de Proteção</h3><p>Devolvemos 100% se sofrer prejuízo.</p></div>
         </div>
 
-        <!-- CTA Final -->
+        <!-- CTA -->
         <div class="cta">
             <h2>Pronto para proteger sua empresa?</h2>
             <p>Junte-se a mais de 10.000 empresas que já confiam no Space-Docx</p>
@@ -246,7 +242,7 @@
 
         <!-- Footer -->
         <div class="footer">
-            <div class="footer-links">
+            <div class="footer-links" style="display:flex; justify-content:center; gap:24px; margin-bottom:16px; flex-wrap:wrap;">
                 <a href="/">Início</a>
                 <a href="/planos">Planos</a>
                 <a href="/politicas">Política de Privacidade</a>
@@ -255,5 +251,58 @@
             <p>© 2026 Space-Docx. Tecnologia anti-fraude para empresas. | Reduza prejuízos com documentos falsos</p>
         </div>
     </div>
+
+    <script>
+        // Slider
+        const slider = document.getElementById('faturamentoSlider');
+        const faturamentoValor = document.getElementById('faturamentoValor');
+        
+        slider.addEventListener('input', function() {
+            let valor = parseInt(this.value);
+            faturamentoValor.textContent = 'R$ ' + valor.toLocaleString('pt-BR');
+        });
+        
+        // Calcular proteção
+        document.getElementById('calcularProtecao').addEventListener('click', function() {
+            const empresaNome = document.getElementById('empresaNome').value;
+            const faturamento = parseInt(slider.value);
+            
+            if (!empresaNome) {
+                alert('Por favor, digite o nome da sua empresa');
+                return;
+            }
+            
+            // Calcular perda potencial (15% do faturamento anual)
+            const perdaAnual = (faturamento * 12) * 0.15;
+            
+            document.getElementById('empresaResultado').innerHTML = `<strong>${empresaNome}</strong>`;
+            document.getElementById('perdaResultado').innerHTML = `R$ ${perdaAnual.toLocaleString('pt-BR')}`;
+            document.getElementById('quizResultado').style.display = 'block';
+            
+            // Scroll para o resultado
+            document.getElementById('quizResultado').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Animação dos números
+        function animateNumber(element, start, end, duration) {
+            let startTime = null;
+            const step = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const current = Math.floor(progress * (end - start) + start);
+                element.textContent = 'R$ ' + current.toLocaleString('pt-BR');
+                if (progress < 1) requestAnimationFrame(step);
+                else element.textContent = 'R$ ' + end.toLocaleString('pt-BR');
+            };
+            requestAnimationFrame(step);
+        }
+        
+        // Animar quando a página carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            animateNumber(document.getElementById('economia1'), 0, 49800, 2000);
+            animateNumber(document.getElementById('economia2'), 0, 247500, 2000);
+            animateNumber(document.getElementById('economia3'), 0, 587000, 2000);
+        });
+    </script>
 </body>
 </html>
