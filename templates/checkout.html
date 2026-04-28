@@ -1,1 +1,205 @@
-
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Space-Docx</title>
+    <script src="https://js.fastsoftbrasil.com/security.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { width: 100%; max-width: 500px; padding: 24px; }
+        .card { background: #111; border: 1px solid #1f1f1f; border-radius: 24px; padding: 40px; }
+        .logo { text-align: center; margin-bottom: 32px; }
+        .logo-icon { font-size: 48px; }
+        .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-size: 24px; margin-bottom: 8px; }
+        .subtitle { color: #a1a1aa; font-size: 14px; margin-bottom: 24px; }
+        .plan-summary { background: #1a1a1a; border-radius: 16px; padding: 20px; margin-bottom: 24px; text-align: center; }
+        .plan-price { font-size: 28px; font-weight: 700; color: #3b82f6; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; color: #a1a1aa; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; color: white; font-size: 14px; }
+        input:focus { outline: none; border-color: #3b82f6; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; margin-top: 16px; font-size: 16px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .security { text-align: center; margin-top: 20px; font-size: 12px; color: #a1a1aa; }
+        .error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); padding: 12px; border-radius: 12px; margin-bottom: 20px; color: #ef4444; font-size: 13px; display: none; }
+        .loading { text-align: center; padding: 20px; color: #a1a1aa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo"><div class="logo-icon">🛸</div><div class="logo-text">SPACE-DOCX</div></div>
+            <h1>Finalizar Assinatura</h1>
+            <p class="subtitle">Preencha os dados do cartão para ativar seu plano</p>
+            <div id="errorMsg" class="error"></div>
+            <div class="plan-summary" id="planInfo">Carregando...</div>
+            <form id="paymentForm">
+                <div class="form-group"><label>Nome no cartão</label><input type="text" id="cardHolder" placeholder="Como está no cartão" required></div>
+                <div class="form-group"><label>Número do cartão</label><input type="text" id="cardNumber" placeholder="4111 1111 1111 1111" maxlength="19" required></div>
+                <div class="row">
+                    <div><label>Validade</label><input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5" required></div>
+                    <div><label>CVV</label><input type="text" id="cardCvv" placeholder="123" maxlength="4" required></div>
+                </div>
+                <div class="form-group"><label>CPF</label><input type="text" id="document" placeholder="000.000.000-00" required></div>
+                <button type="submit" class="btn" id="submitBtn">Pagar agora</button>
+            </form>
+            <div class="security">🔒 Pagamento seguro com criptografia HyperCash<br>✅ Transação protegida</div>
+        </div>
+    </div>
+    <script>
+        // Obter plano da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const planoId = urlParams.get('plano') || 'profissional';
+        
+        // Planos
+        const planos = {
+            'basico': { nome: 'Básico', preco: 49 },
+            'profissional': { nome: 'Profissional', preco: 149 },
+            'enterprise': { nome: 'Enterprise', preco: 349 },
+            'trial': { nome: 'Teste Grátis', preco: 0 }
+        };
+        const plano = planos[planoId] || planos['profissional'];
+        
+        // Exibir informações do plano
+        document.getElementById('planInfo').innerHTML = `
+            <div style="font-size: 16px; margin-bottom: 8px;">Plano ${plano.nome}</div>
+            <div class="plan-price">R$ ${plano.preco}<span>/mês</span></div>
+        `;
+        
+        // Inicializar SDK HyperCash
+        let sdkInicializado = false;
+        const PUBLIC_KEY = "{{ public_key }}";
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await FastSoft.setPublicKey(PUBLIC_KEY);
+                sdkInicializado = true;
+                console.log('SDK HyperCash inicializado');
+            } catch (error) {
+                console.error('Erro SDK:', error);
+                mostrarErro('Carregando sistema de pagamento. Aguarde...');
+            }
+        });
+        
+        // Formatação dos campos
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 16) v = v.slice(0, 16);
+            v = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = v;
+        });
+        
+        document.getElementById('cardExpiry').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 4) v = v.slice(0, 4);
+            if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+            e.target.value = v;
+        });
+        
+        document.getElementById('document').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+            else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+            e.target.value = v;
+        });
+        
+        function mostrarErro(msg) {
+            const div = document.getElementById('errorMsg');
+            div.textContent = msg;
+            div.style.display = 'block';
+            setTimeout(() => div.style.display = 'none', 5000);
+        }
+        
+        // Tokenizar e enviar pagamento
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!sdkInicializado) {
+                mostrarErro('Sistema de pagamento carregando. Aguarde e tente novamente.');
+                return;
+            }
+            
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processando pagamento...';
+            
+            // Coletar dados do cartão
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardHolder = document.getElementById('cardHolder').value.toUpperCase();
+            const cardExpiry = document.getElementById('cardExpiry').value.split('/');
+            const cardCvv = document.getElementById('cardCvv').value;
+            const cpf = document.getElementById('document').value;
+            
+            // Validações básicas
+            if (cardNumber.length < 16) {
+                mostrarErro('Número do cartão inválido');
+                btn.disabled = false;
+                btn.textContent = 'Pagar agora';
+                return;
+            }
+            
+            if (cardExpiry.length < 2 || cardExpiry[0].length < 2 || cardExpiry[1].length < 2) {
+                mostrarErro('Data de validade inválida');
+                btn.disabled = false;
+                btn.textContent = 'Pagar agora';
+                return;
+            }
+            
+            if (cardCvv.length < 3) {
+                mostrarErro('CVV inválido');
+                btn.disabled = false;
+                btn.textContent = 'Pagar agora';
+                return;
+            }
+            
+            try {
+                // Tokenizar o cartão via SDK HyperCash
+                const cardData = {
+                    number: cardNumber,
+                    holderName: cardHolder,
+                    expMonth: cardExpiry[0],
+                    expYear: '20' + cardExpiry[1],
+                    cvv: cardCvv
+                };
+                
+                console.log('Tokenizando cartão...');
+                const cardToken = await FastSoft.encrypt(cardData);
+                console.log('Token obtido:', cardToken);
+                
+                // Enviar para o backend
+                const response = await fetch('/api/criar-pagamento', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plano: planoId,
+                        card_token: cardToken
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    window.location.href = data.redirect;
+                } else {
+                    mostrarErro(data.error || 'Erro no processamento do pagamento');
+                    btn.disabled = false;
+                    btn.textContent = 'Pagar agora';
+                }
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarErro('Erro ao processar pagamento: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = 'Pagar agora';
+            }
+        });
+    </script>
+</body>
+</html>
