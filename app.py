@@ -5,21 +5,12 @@ import os
 import hashlib
 import re
 import uuid
-import requests
-import json
-import base64
 from datetime import datetime, timedelta
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = 'space-docx-super-secret-key-2026'
+app.secret_key = 'space-docx-secret-key-2026'
 CORS(app)
-
-# ==================== CONFIGURAÇÕES HYPERCASH REAL ====================
-# SUAS CHAVES REAIS:
-HYPERCASH_PUBLIC_KEY = "pk_b48f62cc1f920cdaaf9c7bea2cf1e0a20edba5f9"
-HYPERCASH_SECRET_KEY = "sk_b4ed44b6073bae4aed687393a6b7baf8e0047746"
-HYPERCASH_API_URL = "https://api.hypercashbrasil.com.br/api"
 
 UPLOAD_FOLDER = '/tmp/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -36,106 +27,16 @@ USUARIOS = {
     }
 }
 
-ASSINATURAS = {}
 ANALISES = {}
 CHAVES_TESTE = {'FREE-TRIAL-7DAYS': {'usos': 0, 'max_usos': 10, 'dias': 7}}
 
 PLANOS = {
-    'trial': {'id': 1, 'nome': 'Teste Grátis', 'preco': 0, 'preco_centavos': 0, 'dias': 7, 'validacoes': 5},
-    'basico': {'id': 2, 'nome': 'Básico', 'preco': 49, 'preco_centavos': 4900, 'dias': 30, 'validacoes': 50},
-    'profissional': {'id': 3, 'nome': 'Profissional', 'preco': 149, 'preco_centavos': 14900, 'dias': 30, 'validacoes': 300},
-    'enterprise': {'id': 4, 'nome': 'Enterprise', 'preco': 349, 'preco_centavos': 34900, 'dias': 30, 'validacoes': 999999}
+    'trial': {'nome': 'Teste Grátis', 'preco': 0, 'dias': 7, 'validacoes': 5},
+    'basico': {'nome': 'Básico', 'preco': 49, 'dias': 30, 'validacoes': 50},
+    'profissional': {'nome': 'Profissional', 'preco': 149, 'dias': 30, 'validacoes': 300},
+    'enterprise': {'nome': 'Enterprise', 'preco': 349, 'dias': 30, 'validacoes': 999999}
 }
 
-# ==================== FUNÇÕES HYPERCASH ====================
-def criar_transacao_hypercash(plano_id, usuario_email, card_token):
-    """Cria uma transação real no HyperCash"""
-    
-    # Buscar o plano
-    plano = None
-    for p in PLANOS.values():
-        if p['id'] == plano_id:
-            plano = p
-            break
-    
-    if not plano or plano['preco_centavos'] == 0:
-        return {'success': True, 'transaction_id': 'free_trial', 'message': 'Plano gratuito ativado'}
-    
-    # Preparar dados da transação
-    transaction_data = {
-        "amount": plano['preco_centavos'],
-        "currency": "BRL",
-        "payment_method": "credit_card",
-        "card_token": card_token,
-        "customer": {
-            "email": usuario_email
-        },
-        "metadata": {
-            "plano_id": plano_id,
-            "plano_nome": plano['nome']
-        }
-    }
-    
-    # Autenticação Basic Auth
-    auth_string = base64.b64encode(f"x:{HYPERCASH_SECRET_KEY}".encode()).decode()
-    headers = {
-        "Authorization": f"Basic {auth_string}",
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        # Chamada real para API do HyperCash
-        response = requests.post(
-            f"{HYPERCASH_API_URL}/transactions",
-            headers=headers,
-            json=transaction_data,
-            timeout=30
-        )
-        
-        if response.status_code == 200 or response.status_code == 201:
-            data = response.json()
-            return {
-                'success': True,
-                'transaction_id': data.get('id'),
-                'status': data.get('status'),
-                'message': 'Pagamento processado com sucesso'
-            }
-        else:
-            return {
-                'success': False,
-                'error': f"Erro na API: {response.status_code}"
-            }
-    except Exception as e:
-        return {
-            'success': False,
-            'error': f"Erro de conexão: {str(e)}"
-        }
-
-def consultar_transacao(transaction_id):
-    """Consulta status de uma transação no HyperCash"""
-    
-    auth_string = base64.b64encode(f"x:{HYPERCASH_SECRET_KEY}".encode()).decode()
-    headers = {"Authorization": f"Basic {auth_string}"}
-    
-    try:
-        response = requests.get(
-            f"{HYPERCASH_API_URL}/transactions/{transaction_id}",
-            headers=headers,
-            timeout=30
-        )
-        
-        if response.status_code == 200:
-            data = response.json()
-            return {
-                'success': True,
-                'status': data.get('status'),
-                'data': data
-            }
-        return {'success': False, 'error': 'Transação não encontrada'}
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
-
-# ==================== FUNÇÕES AUXILIARES ====================
 def hash_senha(senha):
     return hashlib.sha256(senha.encode()).hexdigest()
 
@@ -177,13 +78,12 @@ def analisar_pdf(caminho):
                 'score': max(0, min(100, score)),
                 'status': status,
                 'rastros': rastros,
-                'metadados': {'producer': producer, 'creator': creator},
+                'metadados': {'producer': producer or 'N/A', 'creator': creator or 'N/A'},
                 'estrutura': {'linearized': pdf.is_linearized, 'pages': len(pdf.pages)}
             }
     except Exception as e:
         return {'score': 0, 'status': 'ERRO', 'rastros': [str(e)], 'metadados': {}, 'estrutura': {}}
 
-# ==================== ROTAS PÚBLICAS ====================
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -322,15 +222,13 @@ def checkout():
     plano_id = request.args.get('plano', 'profissional')
     return render_template('checkout.html', 
                           plano=PLANOS.get(plano_id, PLANOS['profissional']),
-                          plano_id=plano_id,
-                          public_key=HYPERCASH_PUBLIC_KEY)
+                          plano_id=plano_id)
 
 @app.route('/api/criar-pagamento', methods=['POST'])
 @login_required
 def criar_pagamento():
     data = request.json
     plano_id = data.get('plano')
-    card_token = data.get('card_token')
     
     if plano_id not in PLANOS:
         return jsonify({'error': 'Plano inválido'}), 400
@@ -338,36 +236,18 @@ def criar_pagamento():
     plano = PLANOS[plano_id]
     usuario_email = session.get('usuario_email')
     
-    # Criar transação no HyperCash
-    resultado = criar_transacao_hypercash(plano['id'], usuario_email, card_token)
+    # Atualizar assinatura do usuário
+    if usuario_email in USUARIOS:
+        USUARIOS[usuario_email]['plano'] = plano_id
+        USUARIOS[usuario_email]['data_expiracao'] = (datetime.now() + timedelta(days=plano['dias'])).isoformat()
+        session['plano'] = plano_id
+        session['data_expiracao'] = USUARIOS[usuario_email]['data_expiracao']
     
-    if resultado['success']:
-        # Atualizar assinatura do usuário
-        if usuario_email in USUARIOS:
-            USUARIOS[usuario_email]['plano'] = plano_id
-            USUARIOS[usuario_email]['data_expiracao'] = (datetime.now() + timedelta(days=plano['dias'])).isoformat()
-            session['plano'] = plano_id
-            session['data_expiracao'] = USUARIOS[usuario_email]['data_expiracao']
-        
-        return jsonify({
-            'success': True,
-            'message': f'Plano {plano["nome"]} ativado com sucesso!',
-            'redirect': '/dashboard',
-            'transaction_id': resultado.get('transaction_id')
-        })
-    else:
-        return jsonify({
-            'success': False,
-            'error': resultado.get('error', 'Erro no processamento do pagamento')
-        }), 400
-
-@app.route('/api/webhook/hypercash', methods=['POST'])
-def webhook_hypercash():
-    """Webhook para receber confirmações do HyperCash"""
-    data = request.json
-    # Salvar log do webhook
-    print(f"Webhook recebido: {data}")
-    return jsonify({'status': 'ok'})
+    return jsonify({
+        'success': True,
+        'message': f'Plano {plano["nome"]} ativado com sucesso!',
+        'redirect': '/dashboard'
+    })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
