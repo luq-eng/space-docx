@@ -10,7 +10,7 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; flex-wrap: wrap; gap: 20px; }
         .logo { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { font-size: 32px; }
+        .logo-svg { width: 36px; height: 36px; }
         .logo-text { font-size: 20px; font-weight: 700; color: #dc2626; }
         .nav a { color: #a0a0a0; text-decoration: none; margin-left: 32px; }
         .nav a:first-child { margin-left: 0; }
@@ -18,56 +18,83 @@
         h1 { text-align: center; font-size: 40px; margin-bottom: 16px; }
         h1 span { color: #dc2626; }
         .subtitle { text-align: center; color: #a0a0a0; margin-bottom: 60px; font-size: 18px; }
-        .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 80px; }
-        .plan { background: #111; border: 1px solid #2a2a2a; border-radius: 24px; padding: 40px; position: relative; transition: all 0.3s; }
+        .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 80px; }
+        .plan { background: #111; border: 1px solid #2a2a2a; border-radius: 24px; padding: 32px; position: relative; transition: all 0.3s; }
         .plan:hover { transform: translateY(-5px); border-color: #dc2626; }
         .plan.recommended { border: 2px solid #dc2626; }
-        .badge { position: absolute; top: -12px; right: 20px; background: #dc2626; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; color: white; }
-        .plan-name { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-        .plan-price { font-size: 44px; font-weight: 800; margin: 24px 0; color: #dc2626; }
-        .plan-price span { font-size: 16px; color: #666; font-weight: 400; }
-        .plan-features { list-style: none; margin: 32px 0; }
-        .plan-features li { padding: 10px 0; color: #a0a0a0; border-bottom: 1px solid #2a2a2a; font-size: 14px; }
+        .badge { position: absolute; top: -12px; right: 20px; background: #dc2626; padding: 4px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; color: white; }
+        .plan-name { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .plan-price { font-size: 36px; font-weight: 800; margin: 20px 0; color: #dc2626; }
+        .plan-price span { font-size: 14px; color: #666; font-weight: 400; }
+        .plan-credits { font-size: 14px; color: #888; margin-bottom: 16px; }
+        .plan-features { list-style: none; margin: 24px 0; }
+        .plan-features li { padding: 10px 0; color: #a0a0a0; border-bottom: 1px solid #2a2a2a; font-size: 13px; }
         .plan-features li::before { content: "✓"; color: #dc2626; margin-right: 10px; font-weight: bold; }
-        .btn-plan { width: 100%; padding: 14px; background: #dc2626; border: none; border-radius: 40px; color: white; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.2s; }
+        .btn-plan { width: 100%; padding: 14px; background: #dc2626; border: none; border-radius: 40px; color: white; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s; }
         .btn-plan:hover { background: #b91c1c; transform: translateY(-2px); }
         .guarantee { text-align: center; padding: 40px; background: #111; border-radius: 24px; margin-top: 40px; border: 1px solid #2a2a2a; }
         .guarantee h3 { color: #dc2626; margin-bottom: 16px; }
         .footer { text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid #2a2a2a; color: #666; font-size: 12px; }
         .footer a { color: #dc2626; text-decoration: none; }
+        @media (max-width: 1024px) { .plans { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .plans { grid-template-columns: 1fr; } .header { flex-direction: column; text-align: center; } .nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; } .nav a { margin-left: 0; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo"><div class="logo-icon">🛡️</div><div class="logo-text">SPACE-DOCX</div></div>
+            <div class="logo">
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 L50 10Z" stroke="#dc2626" stroke-width="4" fill="none"/>
+                    <path d="M50 30 L65 40 L65 60 L50 70 L35 60 L35 40 L50 30Z" stroke="#dc2626" stroke-width="3" fill="none"/>
+                    <circle cx="50" cy="50" r="8" fill="#dc2626"/>
+                </svg>
+                <div class="logo-text">SPACE-DOCX</div>
+            </div>
             <div class="nav"><a href="/">Início</a><a href="/politicas">Privacidade</a><a href="/login" class="btn-outline">Entrar</a></div>
         </div>
 
         <h1>Planos <span>Space-Docx</span></h1>
-        <p class="subtitle">Escolha o plano ideal para proteger sua empresa</p>
+        <p class="subtitle">Escolha o plano ideal para proteger sua empresa contra fraudes</p>
 
         <div class="plans">
             <div class="plan">
-                <div class="plan-name">Básico</div>
+                <div class="plan-name">Teste Grátis</div>
+                <div class="plan-price">Grátis<span>/7 dias</span></div>
+                <div class="plan-credits">🎯 5 validações</div>
+                <ul class="plan-features"><li>7 dias de teste</li><li>5 análises completas</li><li>Suporte e-mail</li><li>Histórico básico</li></ul>
+                <button class="btn-plan" onclick="assinar('trial')">Testar Grátis</button>
+            </div>
+            <div class="plan">
+                <div class="plan-name">Pequeno Porte</div>
                 <div class="plan-price">R$ 49<span>/mês</span></div>
-                <ul class="plan-features"><li>50 validações/mês</li><li>Suporte por e-mail</li><li>Histórico de 30 dias</li><li>Análise padrão</li></ul>
-                <button class="btn-plan" onclick="assinar('basico')">Assinar agora</button>
+                <div class="plan-credits">🎯 40 créditos/mês</div>
+                <ul class="plan-features"><li>40 validações/mês</li><li>Suporte por e-mail</li><li>Histórico de 60 dias</li><li>Análise completa</li></ul>
+                <button class="btn-plan" onclick="assinar('pequeno')">Assinar agora</button>
             </div>
             <div class="plan recommended">
                 <div class="badge">🔥 Mais Popular</div>
-                <div class="plan-name">Profissional</div>
-                <div class="plan-price">R$ 149<span>/mês</span></div>
-                <ul class="plan-features"><li>300 validações/mês</li><li>Suporte prioritário</li><li>Histórico de 1 ano</li><li>Análise avançada</li><li>API disponível</li><li>Relatórios detalhados</li></ul>
-                <button class="btn-plan" onclick="assinar('profissional')">Assinar agora</button>
+                <div class="plan-name">Médio Porte</div>
+                <div class="plan-price">R$ 179<span>/mês</span></div>
+                <div class="plan-credits">🎯 250 créditos/mês</div>
+                <ul class="plan-features"><li>250 validações/mês</li><li>Suporte prioritário</li><li>Histórico de 1 ano</li><li>API disponível</li><li>Relatórios detalhados</li></ul>
+                <button class="btn-plan" onclick="assinar('medio')">Assinar agora</button>
             </div>
             <div class="plan">
-                <div class="plan-name">Enterprise</div>
+                <div class="plan-name">Grande Porte</div>
                 <div class="plan-price">R$ 349<span>/mês</span></div>
-                <ul class="plan-features"><li>Validações ilimitadas</li><li>Suporte 24/7</li><li>Histórico ilimitado</li><li>API dedicada</li><li>White label</li><li>Treinamento incluso</li><li>Gerente de conta</li></ul>
-                <button class="btn-plan" onclick="assinar('enterprise')">Assinar agora</button>
+                <div class="plan-credits">🎯 500 créditos/mês</div>
+                <ul class="plan-features"><li>500 validações/mês</li><li>Suporte 24/7</li><li>Histórico ilimitado</li><li>API dedicada</li><li>Dashboard avançado</li></ul>
+                <button class="btn-plan" onclick="assinar('grande')">Assinar agora</button>
             </div>
+        </div>
+
+        <div class="plan" style="max-width:400px; margin:0 auto;">
+            <div class="plan-name">Enterprise Ilimitado</div>
+            <div class="plan-price">R$ 599<span>/mês</span></div>
+            <div class="plan-credits">🎯 Validações ILIMITADAS</div>
+            <ul class="plan-features"><li>Sem limites de validações</li><li>Suporte 24/7 dedicado</li><li>White label</li><li>Treinamento incluso</li><li>Gerente de conta exclusivo</li><li>SLA garantido</li></ul>
+            <button class="btn-plan" onclick="assinar('ilimitado')">Assinar agora</button>
         </div>
 
         <div class="guarantee"><h3>🛡️ Garantia de Proteção</h3><p>Se você sofrer qualquer prejuízo com documento aprovado pelo nosso sistema,<br>devolvemos 100% do valor da sua assinatura.</p></div>
