@@ -1,1 +1,55 @@
-
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos | Space-Docx</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
+        .logo { display: flex; align-items: center; gap: 8px; }
+        .logo-icon { font-size: 32px; }
+        .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav a { color: #a1a1aa; text-decoration: none; margin-left: 32px; }
+        h1 { text-align: center; font-size: 36px; margin-bottom: 16px; }
+        .subtitle { text-align: center; color: #a1a1aa; margin-bottom: 60px; }
+        .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
+        .plan { background: #111; border: 1px solid #1f1f1f; border-radius: 24px; padding: 32px; position: relative; }
+        .plan.recommended { border: 2px solid #3b82f6; }
+        .badge { position: absolute; top: -12px; right: 20px; background: #3b82f6; padding: 4px 12px; border-radius: 20px; font-size: 11px; }
+        .plan-name { font-size: 20px; font-weight: 600; }
+        .plan-price { font-size: 36px; font-weight: 700; margin: 20px 0; }
+        .plan-price span { font-size: 14px; color: #a1a1aa; }
+        .plan-features { list-style: none; margin: 24px 0; }
+        .plan-features li { padding: 8px 0; color: #a1a1aa; border-bottom: 1px solid #1f1f1f; }
+        .plan-features li::before { content: "✓"; color: #22c55e; margin-right: 8px; }
+        .btn-plan { width: 100%; padding: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid #2a2a2a; }
+        .footer { text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid #1f1f1f; color: #a1a1aa; font-size: 12px; }
+        .footer a { color: #3b82f6; text-decoration: none; }
+        @media (max-width: 768px) { .plans { grid-template-columns: 1fr; } .nav { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"><div class="logo-icon">🛸</div><div class="logo-text">SPACE-DOCX</div></div>
+            <div class="nav"><a href="/">Início</a><a href="/politicas">Privacidade</a><a href="/login" style="background:linear-gradient(135deg,#3b82f6,#2563eb);padding:8px 20px;border-radius:10px;color:white;">Entrar</a></div>
+        </div>
+        <h1>Planos Space-Docx</h1>
+        <p class="subtitle">Escolha o plano ideal para sua empresa</p>
+        <div class="plans">
+            <div class="plan"><div class="plan-name">Teste Grátis</div><div class="plan-price">Grátis<span>/7 dias</span></div><ul class="plan-features"><li>5 validações</li><li>Suporte e-mail</li></ul><button class="btn-plan btn-outline" onclick="location.href='/login'">Testar</button></div>
+            <div class="plan"><div class="plan-name">Básico</div><div class="plan-price">R$ 49<span>/mês</span></div><ul class="plan-features"><li>50 validações</li><li>Suporte e-mail</li><li>Histórico 30 dias</li></ul><button class="btn-plan" onclick="assinar('basico')">Assinar</button></div>
+            <div class="plan recommended"><div class="badge">Recomendado</div><div class="plan-name">Profissional</div><div class="plan-price">R$ 149<span>/mês</span></div><ul class="plan-features"><li>300 validações</li><li>Suporte prioritário</li><li>Histórico 1 ano</li><li>API</li></ul><button class="btn-plan" onclick="assinar('profissional')">Assinar</button></div>
+            <div class="plan"><div class="plan-name">Enterprise</div><div class="plan-price">R$ 349<span>/mês</span></div><ul class="plan-features"><li>Ilimitado</li><li>Suporte 24/7</li><li>API dedicada</li><li>White label</li></ul><button class="btn-plan" onclick="assinar('enterprise')">Assinar</button></div>
+        </div>
+        <div class="footer"><p>© 2026 Space-Docx. 2 anos de experiência. | <a href="/politicas">Privacidade</a> | <a href="/">Início</a></p></div>
+    </div>
+    <script>
+        function assinar(plano){ if(confirm(`Assinar plano ${plano}?`)) location.href=`/checkout?plano=${plano}`; }
+    </script>
+</body>
+</html>
