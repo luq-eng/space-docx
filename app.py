@@ -25,12 +25,13 @@ HYPERCASH_API_URL = "https://api.hypercashbrasil.com.br/api"
 UPLOAD_FOLDER = '/tmp/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ==================== CONTROLE DE TESTES ====================
-testes_utilizados_ip = defaultdict(list)
-testes_utilizados_cpf = defaultdict(list)
-testes_utilizados_cnpj = defaultdict(list)
-testes_utilizados_email = defaultdict(list)
-testes_utilizados_cep = defaultdict(list)
+# ==================== CONTROLE DE TESTES ÚNICO ====================
+# Cada identificador só pode usar teste UMA ÚNICA VEZ
+testes_utilizados_ip = set()
+testes_utilizados_cpf = set()
+testes_utilizados_cnpj = set()
+testes_utilizados_email = set()
+testes_utilizados_cep = set()
 
 CHAVES_TESTE = {}
 LIMITE_ANALISES_TESTE = 5
@@ -42,29 +43,29 @@ def obter_ip():
     return request.remote_addr or '127.0.0.1'
 
 def pode_gerar_teste(cpf, cnpj, email, cep, ip):
-    if cpf and cpf in testes_utilizados_cpf and len(testes_utilizados_cpf[cpf]) > 0:
-        return False, "Este CPF já utilizou o teste gratuito"
-    if cnpj and cnpj in testes_utilizados_cnpj and len(testes_utilizados_cnpj[cnpj]) > 0:
-        return False, "Este CNPJ já utilizou o teste gratuito"
-    if email and email in testes_utilizados_email and len(testes_utilizados_email[email]) > 0:
-        return False, "Este e-mail já utilizou o teste gratuito"
-    if cep and cep in testes_utilizados_cep and len(testes_utilizados_cep[cep]) > 0:
-        return False, "Este CEP já utilizou o teste gratuito"
-    if ip and ip in testes_utilizados_ip and len(testes_utilizados_ip[ip]) > 0:
-        return False, "Este IP já utilizou o teste gratuito"
+    if cpf and cpf in testes_utilizados_cpf:
+        return False, "Este CPF já utilizou o teste gratuito. Teste único por CPF."
+    if cnpj and cnpj in testes_utilizados_cnpj:
+        return False, "Este CNPJ já utilizou o teste gratuito. Teste único por CNPJ."
+    if email and email in testes_utilizados_email:
+        return False, "Este e-mail já utilizou o teste gratuito. Teste único por e-mail."
+    if cep and cep in testes_utilizados_cep:
+        return False, "Este CEP já utilizou o teste gratuito. Teste único por CEP."
+    if ip and ip in testes_utilizados_ip:
+        return False, "Este IP já utilizou o teste gratuito. Teste único por IP."
     return True, "OK"
 
 def registrar_teste(cpf, cnpj, email, cep, ip, chave):
     if cpf:
-        testes_utilizados_cpf[cpf].append({'chave': chave, 'data': datetime.now().isoformat()})
+        testes_utilizados_cpf.add(cpf)
     if cnpj:
-        testes_utilizados_cnpj[cnpj].append({'chave': chave, 'data': datetime.now().isoformat()})
+        testes_utilizados_cnpj.add(cnpj)
     if email:
-        testes_utilizados_email[email].append({'chave': chave, 'data': datetime.now().isoformat()})
+        testes_utilizados_email.add(email)
     if cep:
-        testes_utilizados_cep[cep].append({'chave': chave, 'data': datetime.now().isoformat()})
+        testes_utilizados_cep.add(cep)
     if ip:
-        testes_utilizados_ip[ip].append({'chave': chave, 'data': datetime.now().isoformat()})
+        testes_utilizados_ip.add(ip)
 
 def gerar_chave_unica():
     return f"FREE-{uuid.uuid4().hex[:12].upper()}"
@@ -75,7 +76,7 @@ USUARIOS = {
         'id': 1,
         'nome': 'Administrador',
         'senha': hashlib.sha256('Admin@2026'.encode()).hexdigest(),
-        'plano': 'enterprise',
+        'plano': 'ilimitado',
         'empresa': 'Space-Docx',
         'cpf': '',
         'cnpj': '00.000.000/0001-00',
@@ -84,14 +85,18 @@ USUARIOS = {
         'data_expiracao': (datetime.now() + timedelta(days=365)).isoformat(),
         'status': 'ativo',
         'tipo': 'pago',
-        'analises_restantes': 999999
+        'creditos': 999999
     }
 }
 ANALISES = {}
+
+# NOVOS PLANOS COM NOVOS PREÇOS E CRÉDITOS
 PLANOS = {
-    'basico': {'id': 1, 'nome': 'Básico', 'preco': 49, 'preco_centavos': 4900, 'dias': 30, 'validacoes': 50},
-    'profissional': {'id': 2, 'nome': 'Profissional', 'preco': 149, 'preco_centavos': 14900, 'dias': 30, 'validacoes': 300},
-    'enterprise': {'id': 3, 'nome': 'Enterprise', 'preco': 349, 'preco_centavos': 34900, 'dias': 30, 'validacoes': 999999}
+    'trial': {'id': 1, 'nome': 'Teste Grátis', 'preco': 0, 'preco_centavos': 0, 'dias': 7, 'creditos': 5},
+    'pequeno': {'id': 2, 'nome': 'Pequeno Porte', 'preco': 49, 'preco_centavos': 4900, 'dias': 30, 'creditos': 40},
+    'medio': {'id': 3, 'nome': 'Médio Porte', 'preco': 179, 'preco_centavos': 17900, 'dias': 30, 'creditos': 250},
+    'grande': {'id': 4, 'nome': 'Grande Porte', 'preco': 349, 'preco_centavos': 34900, 'dias': 30, 'creditos': 500},
+    'ilimitado': {'id': 5, 'nome': 'Enterprise', 'preco': 599, 'preco_centavos': 59900, 'dias': 30, 'creditos': 999999}
 }
 
 def hash_senha(senha):
@@ -103,12 +108,10 @@ def login_required(f):
         if 'usuario_id' not in session:
             return redirect(url_for('login'))
         
-        # Verificar se o usuário está bloqueado
         if session.get('status') == 'bloqueado':
-            flash('❌ Sua conta está bloqueada. Renove seu plano para continuar.', 'error')
+            flash('❌ Sua conta está bloqueada. Renove seu plano.', 'error')
             return redirect(url_for('planos'))
         
-        # Verificar se expirou
         data_expiracao = session.get('data_expiracao')
         if data_expiracao and datetime.fromisoformat(data_expiracao) < datetime.now():
             session['status'] = 'bloqueado'
@@ -165,7 +168,7 @@ def analisar_pdf(caminho):
 # ==================== ROTAS ====================
 @app.route('/')
 def home():
-    return render_template('index.html', planos=PLANOS)
+    return render_template('index.html')
 
 @app.route('/planos')
 def planos():
@@ -214,13 +217,21 @@ def login():
         senha = request.form.get('senha')
         chave_teste = request.form.get('chave_teste', '').strip()
         
-        # Tentar usar chave de teste
         if chave_teste and chave_teste in CHAVES_TESTE:
             chave_info = CHAVES_TESTE[chave_teste]
             if chave_info['usos'] >= chave_info['max_usos']:
                 flash('❌ Chave de teste já utilizada', 'error')
             else:
+                # Verificar novamente se os dados não foram usados
+                dono = chave_info['dono']
+                pode, msg = pode_gerar_teste(dono['cpf'], dono['cnpj'], dono['email'], dono['cep'], dono['ip'])
+                if not pode:
+                    flash(msg, 'error')
+                    return redirect(url_for('login'))
+                
+                registrar_teste(dono['cpf'], dono['cnpj'], dono['email'], dono['cep'], dono['ip'], chave_teste)
                 CHAVES_TESTE[chave_teste]['usos'] += 1
+                
                 session['usuario_id'] = 999
                 session['usuario_nome'] = chave_info['descricao'].replace('Teste para ', '')
                 session['usuario_email'] = chave_info['dono']['email'] or f"teste_{chave_teste}@temp.com"
@@ -228,20 +239,16 @@ def login():
                 session['tipo'] = 'teste'
                 session['status'] = 'ativo'
                 session['data_expiracao'] = (datetime.now() + timedelta(days=chave_info['dias'])).isoformat()
-                session['analises_restantes'] = LIMITE_ANALISES_TESTE
-                analises_teste_contador[session['usuario_email']] = 0
+                session['creditos'] = LIMITE_ANALISES_TESTE
                 flash(f'✅ Teste gratuito de {chave_info["dias"]} dias ativado! Você tem {LIMITE_ANALISES_TESTE} análises.', 'success')
                 return redirect(url_for('dashboard'))
         
-        # Login normal
         if email in USUARIOS and USUARIOS[email]['senha'] == hash_senha(senha):
             usuario = USUARIOS[email]
-            
-            # Verificar bloqueio
             if usuario.get('status') == 'bloqueado':
-                flash('❌ Sua conta está bloqueada. Renove seu plano.', 'error')
+                flash('❌ Conta bloqueada. Renove seu plano.', 'error')
             elif datetime.fromisoformat(usuario['data_expiracao']) < datetime.now():
-                flash('❌ Sua assinatura expirou. Renove seu plano.', 'error')
+                flash('❌ Assinatura expirada. Renove seu plano.', 'error')
                 USUARIOS[email]['status'] = 'bloqueado'
             else:
                 session['usuario_id'] = usuario['id']
@@ -251,7 +258,7 @@ def login():
                 session['tipo'] = 'pago'
                 session['status'] = 'ativo'
                 session['data_expiracao'] = usuario['data_expiracao']
-                session['analises_restantes'] = usuario.get('analises_restantes', 999999)
+                session['creditos'] = usuario.get('creditos', 999999)
                 return redirect(url_for('dashboard'))
         else:
             flash('❌ E-mail ou senha inválidos', 'error')
@@ -262,6 +269,13 @@ def login():
 def registro():
     if request.method == 'POST':
         email = request.form.get('email')
+        cpf = request.form.get('cpf_cnpj')
+        
+        # Verificar se o CPF já usou teste
+        if cpf and cpf in testes_utilizados_cpf:
+            flash('❌ Este CPF já utilizou o teste gratuito. Teste único por CPF.', 'error')
+            return redirect(url_for('registro'))
+        
         if email in USUARIOS:
             flash('E-mail já cadastrado', 'error')
         else:
@@ -272,14 +286,14 @@ def registro():
                 'senha': hash_senha(request.form.get('senha')),
                 'plano': 'trial',
                 'empresa': request.form.get('empresa'),
-                'cpf': request.form.get('cpf_cnpj'),
-                'cnpj': request.form.get('cpf_cnpj'),
+                'cpf': cpf,
+                'cnpj': '',
                 'cep': request.form.get('cep'),
                 'telefone': request.form.get('telefone'),
                 'data_expiracao': (datetime.now() + timedelta(days=7)).isoformat(),
                 'status': 'ativo',
                 'tipo': 'teste',
-                'analises_restantes': LIMITE_ANALISES_TESTE
+                'creditos': LIMITE_ANALISES_TESTE
             }
             flash('Cadastro realizado! Faça login.', 'success')
             return redirect(url_for('login'))
@@ -298,36 +312,29 @@ def dashboard():
                           email=session.get('usuario_email'),
                           plano=session.get('plano'),
                           tipo=session.get('tipo'),
-                          analises_restantes=session.get('analises_restantes', 'Ilimitado'),
+                          creditos=session.get('creditos', 'Ilimitado'),
                           expiracao=session.get('data_expiracao'),
                           status=session.get('status'))
 
 @app.route('/api/analisar', methods=['POST'])
 @login_required
 def analisar():
-    # Verificar se usuário não está bloqueado
     if session.get('status') == 'bloqueado':
         return jsonify({'error': 'Conta bloqueada. Renove seu plano.', 'bloqueado': True, 'redirect': '/planos'}), 403
     
     tipo = session.get('tipo')
     email = session.get('usuario_email')
     
-    # Verificar expiração
     data_expiracao = session.get('data_expiracao')
     if data_expiracao and datetime.fromisoformat(data_expiracao) < datetime.now():
         session['status'] = 'bloqueado'
         return jsonify({'error': 'Assinatura expirada. Renove seu plano.', 'bloqueado': True, 'redirect': '/planos'}), 403
     
-    # Verificar análises restantes para usuário teste
-    if tipo == 'teste':
-        analises_restantes = session.get('analises_restantes', 0)
-        if analises_restantes <= 0:
-            session['status'] = 'bloqueado'
-            return jsonify({'error': 'Seu teste gratuito acabou! Adquira um plano para continuar.', 'bloqueado': True, 'redirect': '/planos'}), 403
-        
-        # Decrementar análises restantes
-        session['analises_restantes'] = analises_restantes - 1
-        analises_teste_contador[email] = analises_teste_contador.get(email, 0) + 1
+    # Verificar créditos
+    creditos = session.get('creditos', 0)
+    if creditos <= 0:
+        session['status'] = 'bloqueado'
+        return jsonify({'error': 'Seus créditos acabaram! Adquira um plano para continuar.', 'bloqueado': True, 'redirect': '/planos'}), 403
     
     if 'pdf' not in request.files:
         return jsonify({'error': 'Nenhum arquivo'}), 400
@@ -336,8 +343,11 @@ def analisar():
     if not arquivo.filename.endswith('.pdf'):
         return jsonify({'error': 'Formato inválido. Apenas PDF'}), 400
     
-    # Simular tempo de análise
-    tempo_analise = random.randint(20, 35)
+    # Decrementar créditos
+    session['creditos'] = creditos - 1
+    
+    # Simular análise
+    tempo_analise = random.randint(25, 35)
     time.sleep(tempo_analise)
     
     arquivo_bytes = arquivo.read()
@@ -365,7 +375,7 @@ def analisar():
         'status_color': resultado['status_color'],
         'score': resultado['score'],
         'data': resultado['data'],
-        'analises_restantes': session.get('analises_restantes', 'Ilimitado')
+        'creditos_restantes': session.get('creditos', 0)
     })
 
 @app.route('/api/historico')
@@ -393,7 +403,7 @@ def obter_usuario():
         'plano': session.get('plano'),
         'tipo': session.get('tipo'),
         'status': session.get('status'),
-        'analises_restantes': session.get('analises_restantes', 'Ilimitado'),
+        'creditos': session.get('creditos', 'Ilimitado'),
         'expiracao': session.get('data_expiracao')
     })
 
@@ -426,7 +436,7 @@ def criar_pagamento():
         USUARIOS[email]['data_expiracao'] = (datetime.now() + timedelta(days=plano['dias'])).isoformat()
         USUARIOS[email]['status'] = 'ativo'
         USUARIOS[email]['tipo'] = 'pago'
-        USUARIOS[email]['analises_restantes'] = plano['validacoes']
+        USUARIOS[email]['creditos'] = plano['creditos']
     else:
         novo_id = max([u['id'] for u in USUARIOS.values()] + [0]) + 1
         USUARIOS[email] = {
@@ -436,26 +446,21 @@ def criar_pagamento():
             'plano': plano_id,
             'empresa': data.get('empresa', ''),
             'cpf': cpf,
-            'cnpj': '',
+            'cnpj': data.get('cnpj', ''),
             'cep': data.get('cep', ''),
             'telefone': data.get('telefone', ''),
             'data_expiracao': (datetime.now() + timedelta(days=plano['dias'])).isoformat(),
             'status': 'ativo',
             'tipo': 'pago',
-            'analises_restantes': plano['validacoes']
+            'creditos': plano['creditos']
         }
     
-    # Simular pagamento (modo demo até HyperCash liberar)
+    # Simular pagamento
     if metodo == 'pix':
         pix_code = f"00020101021226930014BR.GOV.BCB.PIX2572pix-h.hypercashbrasil.com.br/qr/v2/{uuid.uuid4().hex[:16]}"
         return jsonify({'success': True, 'pix_code': pix_code, 'message': '✅ Pagamento via PIX gerado!'})
     else:
         return jsonify({'success': True, 'transaction_id': f"demo_{uuid.uuid4().hex[:16]}", 'redirect': '/dashboard', 'message': '✅ Pagamento aprovado!'})
-
-@app.route('/api/webhook/hypercash', methods=['POST'])
-def webhook_hypercash():
-    print(f"Webhook recebido: {request.json}")
-    return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
     print("="*50)
