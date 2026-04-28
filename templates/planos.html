@@ -6,47 +6,73 @@
     <title>Planos | Space-Docx</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
-        .logo { display: flex; align-items: center; gap: 8px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; flex-wrap: wrap; gap: 20px; }
+        .logo { display: flex; align-items: center; gap: 12px; }
         .logo-icon { font-size: 32px; }
-        .logo-text { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav a { color: #a1a1aa; text-decoration: none; margin-left: 32px; }
-        h1 { text-align: center; font-size: 36px; margin-bottom: 16px; }
-        .subtitle { text-align: center; color: #a1a1aa; margin-bottom: 60px; }
-        .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 60px; }
-        .plan { background: #111; border: 1px solid #1f1f1f; border-radius: 24px; padding: 40px; position: relative; transition: transform 0.3s; }
-        .plan:hover { transform: translateY(-4px); border-color: #3b82f6; }
-        .plan.recommended { border: 2px solid #3b82f6; }
-        .badge { position: absolute; top: -12px; right: 20px; background: #3b82f6; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-        .plan-name { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-        .plan-price { font-size: 36px; font-weight: 700; margin: 20px 0; }
-        .plan-price span { font-size: 14px; color: #a1a1aa; }
-        .plan-features { list-style: none; margin: 24px 0; }
-        .plan-features li { padding: 8px 0; color: #a1a1aa; border-bottom: 1px solid #1f1f1f; font-size: 13px; }
-        .plan-features li::before { content: "✓"; color: #22c55e; margin-right: 8px; }
-        .btn-plan { width: 100%; padding: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
-        .btn-plan:hover { transform: translateY(-2px); }
-        .footer { text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid #1f1f1f; color: #a1a1aa; font-size: 12px; }
-        .footer a { color: #3b82f6; text-decoration: none; }
-        @media (max-width: 768px) { .plans { grid-template-columns: 1fr; } .nav { display: none; } }
+        .logo-text { font-size: 20px; font-weight: 700; color: #dc2626; }
+        .nav a { color: #a0a0a0; text-decoration: none; margin-left: 32px; }
+        .nav a:first-child { margin-left: 0; }
+        .btn-outline { background: transparent; border: 1px solid #dc2626; padding: 8px 20px; border-radius: 30px; color: #dc2626; }
+        h1 { text-align: center; font-size: 40px; margin-bottom: 16px; }
+        h1 span { color: #dc2626; }
+        .subtitle { text-align: center; color: #a0a0a0; margin-bottom: 60px; font-size: 18px; }
+        .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 80px; }
+        .plan { background: #111; border: 1px solid #2a2a2a; border-radius: 24px; padding: 40px; position: relative; transition: all 0.3s; }
+        .plan:hover { transform: translateY(-5px); border-color: #dc2626; }
+        .plan.recommended { border: 2px solid #dc2626; }
+        .badge { position: absolute; top: -12px; right: 20px; background: #dc2626; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; color: white; }
+        .plan-name { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .plan-price { font-size: 44px; font-weight: 800; margin: 24px 0; color: #dc2626; }
+        .plan-price span { font-size: 16px; color: #666; font-weight: 400; }
+        .plan-features { list-style: none; margin: 32px 0; }
+        .plan-features li { padding: 10px 0; color: #a0a0a0; border-bottom: 1px solid #2a2a2a; font-size: 14px; }
+        .plan-features li::before { content: "✓"; color: #dc2626; margin-right: 10px; font-weight: bold; }
+        .btn-plan { width: 100%; padding: 14px; background: #dc2626; border: none; border-radius: 40px; color: white; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.2s; }
+        .btn-plan:hover { background: #b91c1c; transform: translateY(-2px); }
+        .guarantee { text-align: center; padding: 40px; background: #111; border-radius: 24px; margin-top: 40px; border: 1px solid #2a2a2a; }
+        .guarantee h3 { color: #dc2626; margin-bottom: 16px; }
+        .footer { text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid #2a2a2a; color: #666; font-size: 12px; }
+        .footer a { color: #dc2626; text-decoration: none; }
+        @media (max-width: 768px) { .plans { grid-template-columns: 1fr; } .header { flex-direction: column; text-align: center; } .nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; } .nav a { margin-left: 0; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo"><div class="logo-icon">🛡️</div><div class="logo-text">SPACE-DOCX</div></div>
-            <div class="nav"><a href="/">Início</a><a href="/politicas">Privacidade</a><a href="/login" style="background:linear-gradient(135deg,#3b82f6,#2563eb);padding:8px 20px;border-radius:10px;color:white;">Entrar</a></div>
+            <div class="nav"><a href="/">Início</a><a href="/politicas">Privacidade</a><a href="/login" class="btn-outline">Entrar</a></div>
         </div>
-        <h1>Planos Space-Docx</h1>
-        <p class="subtitle">Escolha o plano ideal para sua empresa</p>
+
+        <h1>Planos <span>Space-Docx</span></h1>
+        <p class="subtitle">Escolha o plano ideal para proteger sua empresa</p>
+
         <div class="plans">
-            <div class="plan"><div class="plan-name">Básico</div><div class="plan-price">R$ 49<span>/mês</span></div><ul class="plan-features"><li>50 validações/mês</li><li>Suporte por e-mail</li><li>Histórico de 30 dias</li><li>Análise básica</li></ul><button class="btn-plan" onclick="assinar('basico')">Assinar agora</button></div>
-            <div class="plan recommended"><div class="badge">Recomendado</div><div class="plan-name">Profissional</div><div class="plan-price">R$ 149<span>/mês</span></div><ul class="plan-features"><li>300 validações/mês</li><li>Suporte prioritário</li><li>Histórico de 1 ano</li><li>Análise avançada</li><li>API disponível</li></ul><button class="btn-plan" onclick="assinar('profissional')">Assinar agora</button></div>
-            <div class="plan"><div class="plan-name">Enterprise</div><div class="plan-price">R$ 349<span>/mês</span></div><ul class="plan-features"><li>Validações ilimitadas</li><li>Suporte 24/7</li><li>Histórico ilimitado</li><li>API dedicada</li><li>White label</li><li>Treinamento incluso</li></ul><button class="btn-plan" onclick="assinar('enterprise')">Assinar agora</button></div>
+            <div class="plan">
+                <div class="plan-name">Básico</div>
+                <div class="plan-price">R$ 49<span>/mês</span></div>
+                <ul class="plan-features"><li>50 validações/mês</li><li>Suporte por e-mail</li><li>Histórico de 30 dias</li><li>Análise padrão</li></ul>
+                <button class="btn-plan" onclick="assinar('basico')">Assinar agora</button>
+            </div>
+            <div class="plan recommended">
+                <div class="badge">🔥 Mais Popular</div>
+                <div class="plan-name">Profissional</div>
+                <div class="plan-price">R$ 149<span>/mês</span></div>
+                <ul class="plan-features"><li>300 validações/mês</li><li>Suporte prioritário</li><li>Histórico de 1 ano</li><li>Análise avançada</li><li>API disponível</li><li>Relatórios detalhados</li></ul>
+                <button class="btn-plan" onclick="assinar('profissional')">Assinar agora</button>
+            </div>
+            <div class="plan">
+                <div class="plan-name">Enterprise</div>
+                <div class="plan-price">R$ 349<span>/mês</span></div>
+                <ul class="plan-features"><li>Validações ilimitadas</li><li>Suporte 24/7</li><li>Histórico ilimitado</li><li>API dedicada</li><li>White label</li><li>Treinamento incluso</li><li>Gerente de conta</li></ul>
+                <button class="btn-plan" onclick="assinar('enterprise')">Assinar agora</button>
+            </div>
         </div>
-        <div class="footer"><p>© 2026 Space-Docx. 2 anos de experiência. | <a href="/politicas">Privacidade</a> | <a href="/">Início</a></p></div>
+
+        <div class="guarantee"><h3>🛡️ Garantia de Proteção</h3><p>Se você sofrer qualquer prejuízo com documento aprovado pelo nosso sistema,<br>devolvemos 100% do valor da sua assinatura.</p></div>
+
+        <div class="footer"><p>© 2026 Space-Docx. Proteja seu negócio contra fraudes documentais. | <a href="/">Início</a> | <a href="/politicas">Privacidade</a></p></div>
     </div>
     <script>function assinar(plano){ window.location.href=`/checkout/${plano}`; }</script>
 </body>
